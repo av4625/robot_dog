@@ -136,26 +136,8 @@ void set_leg_position(void* params)
             shoulder_angle, -right_angle_radians, right_angle_radians, 40, 2040);
         knee_microseconds = calc.map(std::get<2>(angles), 0, M_PI, 2600, 600);
 
-        // arduino->print("Height (mm): ");
-        // arduino->println(height);
-        // arduino->print("Shoulder Degrees: ");
-        // arduino->println(std::get<0>(angles) * (180 / M_PI));
-        // arduino->print("Knee Degrees: ");
-        // arduino->println(std::get<2>(angles) * (180 / M_PI));
-        // arduino->print("Shoulder Microseconds: ");
-        // arduino->println(shoulder_microseconds);
-        // arduino->print("Knee Microseconds: ");
-        // arduino->println(knee_microseconds);
-
         shoulder.writeMicroseconds(shoulder_microseconds);
         knee.writeMicroseconds(knee_microseconds);
         delay(1);
     }
 }
-
-// void read_potentiometer(void*)
-// {
-//     static input_devices::potentiometer pot{arduino, 34};
-//     potentiometer_value = pot.read();
-//     arduino->println(potentiometer_value);
-// }

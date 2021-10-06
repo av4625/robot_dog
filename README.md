@@ -26,7 +26,7 @@ design for the dog and more servos
 
 # Dependencies
 * Conan: Package manager for C++. Used to get GoogleTest for the unit tests
-* 8 MG90S servos
+* 8 MG90S servos (12 if the stretch goal of positioning in Y space is met)
 * ESP32 38 pin model (Other models should work, pins may/may not need changed
 for other models)
 * Power supply for the servos (I use a 2 cell, 7.4v lipo regulated to 6v)
