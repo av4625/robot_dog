@@ -6,22 +6,22 @@
 * More as I know them...
 
 # To-Do List
-[x] Make an upper leg
-[x] Make a lower leg
-[x] Position a single foot in Z space (Isosceles Triangle)
-[x] Position a single foot in X space (Right Angled Triangle)
-[x] Buy more servos for more legs
-[ ] Work out exact radians to servo microseconds mapping ranges
-[ ] Add smoothing to servos
-[ ] Add interpolation between movements
-[ ] Make 3 more legs
-[ ] Write code to position all legs independently
-[ ] Make the dogs body
-[ ] Make gait to lift opposite legs
-[ ] Make gait to walk
+- [x] Make an upper leg
+- [x] Make a lower leg
+- [x] Position a single foot in Z space (Isosceles Triangle)
+- [x] Position a single foot in X space (Right Angled Triangle)
+- [x] Buy more servos for more legs
+- [ ] Work out exact radians to servo microseconds mapping ranges
+- [ ] Add smoothing to servos
+- [ ] Add interpolation between movements
+- [ ] Make 3 more legs
+- [ ] Write code to position all legs independently
+- [ ] Make the dogs body
+- [ ] Make gait to lift opposite legs
+- [ ] Make gait to walk
 
 # Stretch Goals
-[ ] Position a single foot in Y space (Right Angled Triangle). Requires a hip
+- [ ] Position a single foot in Y space (Right Angled Triangle). Requires a hip
 design for the dog and more servos
 
 # Dependencies
