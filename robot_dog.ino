@@ -92,9 +92,6 @@ void loop()
     }
 }
 
-int shoulder_microseconds = 0;
-int knee_microseconds = 0;
-
 void set_leg_position(void* params)
 {
     const std::shared_ptr<
@@ -112,6 +109,8 @@ void set_leg_position(void* params)
     uint8_t h{0};
     int8_t f_b{0};
     float shoulder_angle{0};
+    short shoulder_microseconds = 0;
+    short knee_microseconds = 0;
 
     while(true)
     {
@@ -120,7 +119,7 @@ void set_leg_position(void* params)
 
         auto leg_height = forward_back_triangle->calculate_hypotenuse(
             f_b, h);
-        auto shoulder_advance = forward_back_triangle->generate_angles(
+        const auto shoulder_advance = forward_back_triangle->generate_angles(
             f_b, h);
 
         if (leg_height > 109)
@@ -128,7 +127,7 @@ void set_leg_position(void* params)
             leg_height = 109;
         }
 
-        auto angles = height_triangle->generate_angles(leg_height);
+        const auto angles = height_triangle->generate_angles(leg_height);
 
         shoulder_angle = std::get<0>(angles) + std::get<0>(shoulder_advance);
 
