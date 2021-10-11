@@ -34,3 +34,4 @@ design for the dog and more servos
 pins, pins may/may not need changed
 for other models)
 * Power supply for the servos (I use a 2 cell, 7.4v lipo regulated to 6v)
+* 3D Printer

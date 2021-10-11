@@ -1,0 +1,21 @@
+os: linux
+dist: bionic
+language: python
+python: "3.6"
+compiler:
+  - gcc
+install:
+# Install conan
+  - pip install conan
+# Automatic detection of your arch, compiler, etc.
+  - conan user
+  - conan profile new default --detect
+  - conan profile update settings.compiler.libcxx=libstdc++11 default
+
+script:
+  - cd test
+  - mkdir build && cd build
+  - conan install .. --build=gtest
+  - cmake ..
+  - make -j
+  - ctest
