@@ -1,4 +1,4 @@
-[![Unit Tests Status](https://app.travis-ci.com/av4625/robot_dog.svg?branch=master)](https://app.travis-ci.com/av4625/robot_dog)
+[![Build Status](https://app.travis-ci.com/av4625/robot_dog.svg?branch=master)](https://app.travis-ci.com/av4625/robot_dog)
 
 # Robot Dog
 
@@ -15,8 +15,7 @@
 - [x] Buy more servos for more legs
 - [ ] Work out exact radians to servo microseconds mapping ranges
 - [ ] Add smoothing to servos
-- [ ] Add interpolation between movements (Maybe make a public arduino
-interpolation library)
+- [ ] Add interpolation between movements (RAMP library)
 - [ ] New upper leg design so that there is some natural compliance at the
 joints
 - [ ] Make 3 more legs
