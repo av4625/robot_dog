@@ -1,4 +1,5 @@
 [![Build Status](https://app.travis-ci.com/av4625/robot_dog.svg?branch=master)](https://app.travis-ci.com/av4625/robot_dog)
+[![Unittests](https://github.com/av4625/robot_dog/actions/workflows/unittests.yml/badge.svg)](https://github.com/av4625/robot_dog/actions/workflows/unittests.yml)
 
 # Robot Dog
 
