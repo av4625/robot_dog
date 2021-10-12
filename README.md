@@ -14,9 +14,12 @@
 - [x] Position a single foot in Z space (Isosceles Triangle)
 - [x] Position a single foot in X space (Right Angled Triangle)
 - [x] Buy more servos for more legs
+- [ ] Figure a clean way to add the "trim" or microsecond offset that is
+required to move the joints to the zero position
 - [ ] Work out exact radians to servo microseconds mapping ranges
 - [ ] Add smoothing to servos
-- [ ] Add interpolation between movements (RAMP library)
+- [x] Add hal for RAMP library
+- [ ] Use hal RAMP for interpolation
 - [ ] New upper leg design so that there is some natural compliance at the
 joints
 - [ ] Make 3 more legs
@@ -24,6 +27,7 @@ joints
 - [ ] Make the dogs body
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
+- [ ] Remove travis integration?
 
 # Stretch Goals
 - [ ] Position a single foot in Y space (Right Angled Triangle). Requires a hip
