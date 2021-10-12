@@ -1,3 +1,5 @@
+[![Unit Tests Status](https://app.travis-ci.com/av4625/robot_dog.svg?branch=master)](https://app.travis-ci.com/av4625/robot_dog)
+
 # Robot Dog
 
 # Dimensions
