@@ -19,7 +19,7 @@ required to move the joints to the zero position
 - [ ] Work out exact radians to servo microseconds mapping ranges
 - [ ] Add smoothing to servos
 - [x] Add hal for RAMP library
-- [ ] Use hal RAMP for interpolation
+- [x] Use hal RAMP for interpolation
 - [ ] New upper leg design so that there is some natural compliance at the
 joints
 - [ ] Make 3 more legs
