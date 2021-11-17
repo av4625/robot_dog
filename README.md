@@ -39,6 +39,12 @@ required to move the joints to the zero position
 using an easing out curve like a sine curve)
 - [x] Add hal for RAMP library
 - [x] Use hal RAMP for interpolation
+- [ ] Change max height depending on forward/back amount?
+- [ ] Take the servo pins in the constructors of the robot and leg impls so the
+interfaces don't need to know how many pins a specific impl will need in
+the begin function?
+- [ ] Should dog `set_position` invert the forward back position so that when
+you set the dog position forward the body goes forward and the leg goes back?
 - [ ] Write code to position all legs independently
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
