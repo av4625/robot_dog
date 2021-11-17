@@ -19,13 +19,13 @@ public:
         short min_microseconds,
         short max_microseconds);
 
-    void begin(uint8_t pin);
+    void begin(uint8_t pin) override;
 
-    void write_microseconds(short microseconds);
+    void write_microseconds(short microseconds) override;
 
-    short get_minimum_time_for_180() const;
+    short get_minimum_time_for_180() const override;
 
-    const std::pair<short, short>& get_microsecond_values() const;
+    const std::pair<short, short>& get_microsecond_values() const override;
 
 private:
     Servo servo_;

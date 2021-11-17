@@ -14,27 +14,10 @@ namespace robot
 class leg
 {
 public:
-    leg(
-        const std::shared_ptr<
-            const mathmatics::trigonometry::right_angled_triangle>& forward_back_triangle,
-        const std::shared_ptr<
-            const mathmatics::trigonometry::isosceles_triangle>& height_triangle,
-        std::unique_ptr<hal::hardware::servo> shoulder,
-        std::unique_ptr<hal::hardware::servo> knee,
-        std::unique_ptr<hal::interpolation> shoulder_interpolation,
-        std::unique_ptr<hal::interpolation> knee_interpolation,
-        const std::shared_ptr<const mathmatics::calculations>& calc);
-
-private:
-    const std::shared_ptr<
-        const mathmatics::trigonometry::right_angled_triangle> forward_back_triangle_;
-    const std::shared_ptr<
-        const mathmatics::trigonometry::isosceles_triangle> height_triangle_;
-    const std::unique_ptr<hal::hardware::servo> shoulder_;
-    const std::unique_ptr<hal::hardware::servo> knee_;
-    const std::unique_ptr<hal::interpolation> shoulder_interpolation_;
-    const std::unique_ptr<hal::interpolation> knee_interpolation_;
-    const std::shared_ptr<const mathmatics::calculations> calc_;
+    virtual ~leg(){}
+    virtual void begin(uint8_t shoulder_pin, uint8_t knee_pin) = 0;
+    virtual void set_position(int8_t height, int8_t forward_back) = 0;
+    virtual void update_position() = 0;
 };
 
 }

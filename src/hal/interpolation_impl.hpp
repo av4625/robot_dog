@@ -15,18 +15,18 @@ public:
         int range_start,
         int range_end,
         unsigned long duration,
-        interpolation_curve curve);
+        interpolation_curve curve) override;
 
     void start(
         int range_start,
         int range_end,
         unsigned long duration,
         interpolation_curve curve,
-        int grain);
+        int grain) override;
 
-    int get_value();
+    int get_value() override;
 
-    bool is_finished();
+    bool is_finished() override;
 
 private:
     rampDouble ramp_;
