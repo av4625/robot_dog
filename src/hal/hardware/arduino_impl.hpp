@@ -18,9 +18,11 @@ public:
     unsigned long millis() const override;
     void print(const char* message) const override;
     void print(int message) const override;
+    void print(uint32_t message) const override;
     void print(double message) const override;
     void println(const char* message) const override;
     void println(int message) const override;
+    void println(uint32_t message) const override;
     void println(double message) const override;
 };
 

@@ -42,6 +42,11 @@ void arduino_impl::print(const int message) const
     Serial.print(message);
 }
 
+void arduino_impl::print(const uint32_t message) const
+{
+    Serial.print(message);
+}
+
 void arduino_impl::print(const double message) const
 {
     Serial.print(message);
@@ -53,6 +58,11 @@ void arduino_impl::println(const char* message) const
 }
 
 void arduino_impl::println(const int message) const
+{
+    Serial.println(message);
+}
+
+void arduino_impl::println(const uint32_t message) const
 {
     Serial.println(message);
 }

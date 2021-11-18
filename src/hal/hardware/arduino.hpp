@@ -19,9 +19,11 @@ public:
     virtual unsigned long millis() const = 0;
     virtual void print(const char* message) const = 0;
     virtual void print(int message) const = 0;
+    virtual void print(uint32_t message) const = 0;
     virtual void print(double message) const = 0;
     virtual void println(const char* message) const = 0;
     virtual void println(int message) const = 0;
+    virtual void println(uint32_t message) const = 0;
     virtual void println(double message) const = 0;
 };
 

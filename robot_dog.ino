@@ -44,7 +44,10 @@ std::atomic<int8_t> height{0};
 void setup()
 {
     arduino->begin(115200);
+
+    PS4.attach(ps4_controller_event);
     PS4.begin("01:01:01:01:01:01");
+    PS4.attachOnConnect(ps4_controller_connected);
 
     ESP32PWM::allocateTimer(0);
     ESP32PWM::allocateTimer(1);
@@ -54,27 +57,29 @@ void setup()
     leg->begin(hal::hardware::D18, hal::hardware::D5);
 
     xTaskCreatePinnedToCore(
-        move_leg,           // Task function.
-        "Task1",            // Name of task.
-        10000,              // Stack size of task
-        NULL,               // Parameter of the task
-        0,                  // Priority of the task
-        NULL,               // Task handle to keep track of created task
-        1);                 // Pin task to core 0
-
-    xTaskCreatePinnedToCore(
         set_leg_position,   // Task function.
         "Task2",            // Name of task.
         10000,              // Stack size of task
         NULL,               // Parameter of the task
         0,                  // Priority of the task
         NULL,               // Task handle to keep track of created task
-        0);                 // Pin task to core 0
+        1);                 // Pin task to core 1
 }
 
 void loop()
 {
     vTaskDelete(NULL);
+}
+
+void ps4_controller_connected()
+{
+    // Flash lights and rumble?
+    arduino->println(xPortGetCoreID());
+}
+
+void ps4_controller_event()
+{
+    arduino->println(xPortGetCoreID());
 }
 
 void move_leg(void* params)

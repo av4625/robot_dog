@@ -45,9 +45,10 @@ interfaces don't need to know how many pins a specific impl will need in
 the begin function?
 - [ ] Should dog `set_position` invert the forward back position so that when
 you set the dog position forward the body goes forward and the leg goes back?
-- [ ] Write code to position all legs independently
+- [x] Write code to position all legs independently
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
+- [ ] Statemachine for different modes controlled by the PS4 remote
 - [ ] Remove travis integration?
 
 ### Stretch Goals
