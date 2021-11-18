@@ -40,6 +40,9 @@ using an easing out curve like a sine curve)
 - [x] Add hal for RAMP library
 - [x] Use hal RAMP for interpolation
 - [ ] Change max height depending on forward/back amount?
+- [ ] Set starting position of robot so we dont have to rely on center joysticks
+- [ ] Make calculations mockable so the `two_axis_leg` tests are better (
+templated `constrict` holding me back)
 - [ ] Take the servo pins in the constructors of the robot and leg impls so the
 interfaces don't need to know how many pins a specific impl will need in
 the begin function?

@@ -37,8 +37,8 @@ two_axis_leg::two_axis_leg(
         min_height_(40),
         max_forward_(-30),
         max_back_(30),
-        previous_shoulder_microseconds_(0),
-        previous_knee_microseconds_(0),
+        previous_shoulder_microseconds_(1500),
+        previous_knee_microseconds_(1500),
         previous_forward_back_(0),
         previous_height_(0)
 {
@@ -78,8 +78,8 @@ void two_axis_leg::set_position(const int8_t height, const int8_t forward_back)
 
 void two_axis_leg::update_position()
 {
-    if (!knee_interpolation_->is_finished() ||
-        !shoulder_interpolation_->is_finished())
+    if (!shoulder_interpolation_->is_finished() ||
+        !knee_interpolation_->is_finished())
     {
         previous_shoulder_microseconds_ = shoulder_interpolation_->get_value();
         previous_knee_microseconds_ = knee_interpolation_->get_value();
