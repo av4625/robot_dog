@@ -15,7 +15,7 @@ class leg
 {
 public:
     virtual ~leg(){}
-    virtual void begin(uint8_t shoulder_pin, uint8_t knee_pin) = 0;
+    virtual void begin() = 0;
     virtual void set_position(int8_t height, int8_t forward_back) = 0;
     virtual void update_position() = 0;
 };

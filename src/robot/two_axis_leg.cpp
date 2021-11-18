@@ -21,7 +21,9 @@ two_axis_leg::two_axis_leg(
     std::unique_ptr<hal::hardware::servo> knee,
     std::unique_ptr<hal::interpolation> shoulder_interpolation,
     std::unique_ptr<hal::interpolation> knee_interpolation,
-    const std::shared_ptr<const mathmatics::calculations>& calc) :
+    const std::shared_ptr<const mathmatics::calculations>& calc,
+    const uint8_t shoulder_pin,
+    const uint8_t knee_pin) :
         forward_back_triangle_(forward_back_triangle),
         height_triangle_(height_triangle),
         shoulder_(std::move(shoulder)),
@@ -29,6 +31,8 @@ two_axis_leg::two_axis_leg(
         shoulder_interpolation_(std::move(shoulder_interpolation)),
         knee_interpolation_(std::move(knee_interpolation)),
         calc_(calc),
+        shoulder_pin_(shoulder_pin),
+        knee_pin_(knee_pin),
         minimum_time_for_max_rotation_(
             (shoulder_->get_minimum_time_for_180() > knee_->get_minimum_time_for_180()) ?
                 shoulder_->get_minimum_time_for_180() :
@@ -44,10 +48,10 @@ two_axis_leg::two_axis_leg(
 {
 }
 
-void two_axis_leg::begin(const uint8_t shoulder_pin, const uint8_t knee_pin)
+void two_axis_leg::begin()
 {
-    shoulder_->begin(shoulder_pin);
-    knee_->begin(knee_pin);
+    shoulder_->begin(shoulder_pin_);
+    knee_->begin(knee_pin_);
 }
 
 void two_axis_leg::set_position(const int8_t height, const int8_t forward_back)

@@ -24,9 +24,11 @@ public:
         std::unique_ptr<hal::hardware::servo> knee,
         std::unique_ptr<hal::interpolation> shoulder_interpolation,
         std::unique_ptr<hal::interpolation> knee_interpolation,
-        const std::shared_ptr<const mathmatics::calculations>& calc);
+        const std::shared_ptr<const mathmatics::calculations>& calc,
+        uint8_t shoulder_pin,
+        uint8_t knee_pin);
 
-    void begin(uint8_t shoulder_pin, uint8_t knee_pin) override;
+    void begin() override;
 
     void set_position(int8_t height, int8_t forward_back) override;
 
@@ -42,6 +44,8 @@ private:
     const std::unique_ptr<hal::interpolation> shoulder_interpolation_;
     const std::unique_ptr<hal::interpolation> knee_interpolation_;
     const std::shared_ptr<const mathmatics::calculations> calc_;
+    const uint8_t shoulder_pin_;
+    const uint8_t knee_pin_;
     const short minimum_time_for_max_rotation_;
     const uint8_t max_height_;
     const uint8_t min_height_;

@@ -16,6 +16,9 @@ namespace robot
 namespace
 {
 
+const uint8_t shoulder_pin{1};
+const uint8_t knee_pin{1};
+
 class TwoAxisLegTests : public ::testing::Test
 {
 protected:
@@ -49,7 +52,9 @@ protected:
             std::move(knee_servo_mock_),
             std::move(shoulder_interpolation_mock_),
             std::move(knee_interpolation_mock_),
-            std::make_shared<const mathmatics::calculations>()));
+            std::make_shared<const mathmatics::calculations>(),
+            shoulder_pin,
+            knee_pin));
     }
 
     const std::shared_ptr<
@@ -104,9 +109,9 @@ protected:
 
 TEST_F(TwoAxisLegTests, BeginWillCallBeginForBothServos)
 {
-    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin(1));
-    EXPECT_CALL(*knee_servo_mock_ptr_, begin(2));
-    two_axis_leg_->begin(1, 2);
+    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin(shoulder_pin));
+    EXPECT_CALL(*knee_servo_mock_ptr_, begin(knee_pin));
+    two_axis_leg_->begin();
 }
 
 TEST_F(TwoAxisLegTests,

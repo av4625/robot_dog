@@ -46,11 +46,11 @@ protected:
 
 TEST_F(DogTests, BeginWillCallBeginForAllLegs)
 {
-    EXPECT_CALL(*front_left_ptr_, begin(1, 2));
-    EXPECT_CALL(*rear_left_ptr_, begin(3, 4));
-    EXPECT_CALL(*front_right_ptr_, begin(5, 6));
-    EXPECT_CALL(*rear_right_ptr_, begin(7, 8));
-    dog_.begin(1, 2, 3, 4, 5, 6, 7, 8);
+    EXPECT_CALL(*front_left_ptr_, begin());
+    EXPECT_CALL(*rear_left_ptr_, begin());
+    EXPECT_CALL(*front_right_ptr_, begin());
+    EXPECT_CALL(*rear_right_ptr_, begin());
+    dog_.begin();
 }
 
 TEST_F(DogTests, SetPositionWillCallSetPositionForAllLegs)

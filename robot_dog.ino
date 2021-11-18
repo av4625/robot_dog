@@ -36,7 +36,9 @@ const std::unique_ptr<robot::leg> leg{
         std::move(knee_servo),
         std::move(shoulder_interpolation),
         std::move(knee_interpolation),
-        std::make_shared<const mathmatics::calculations>())};
+        std::make_shared<const mathmatics::calculations>(),
+        hal::hardware::D18,
+        hal::hardware::D5)};
 
 std::atomic<int8_t> forward_back{0};
 std::atomic<int8_t> height{0};
@@ -54,7 +56,7 @@ void setup()
     ESP32PWM::allocateTimer(2);
     ESP32PWM::allocateTimer(3);
 
-    leg->begin(hal::hardware::D18, hal::hardware::D5);
+    leg->begin();
 
     xTaskCreatePinnedToCore(
         set_leg_position,   // Task function.

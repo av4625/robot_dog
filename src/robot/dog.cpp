@@ -15,16 +15,12 @@ dog::dog(
 {
 }
 
-void dog::begin(
-    const uint8_t front_left_shoulder_pin, const uint8_t front_left_knee_pin,
-    const uint8_t rear_left_shoulder_pin, const uint8_t rear_left_knee_pin,
-    const uint8_t front_right_shoulder_pin, const uint8_t front_right_knee_pin,
-    const uint8_t rear_right_shoulder_pin, const uint8_t rear_right_knee_pin)
+void dog::begin()
 {
-    front_left_->begin(front_left_shoulder_pin, front_left_knee_pin);
-    rear_left_->begin(rear_left_shoulder_pin, rear_left_knee_pin);
-    front_right_->begin(front_right_shoulder_pin, front_right_knee_pin);
-    rear_right_->begin(rear_right_shoulder_pin, rear_right_knee_pin);
+    front_left_->begin();
+    rear_left_->begin();
+    front_right_->begin();
+    rear_right_->begin();
 }
 
 void dog::set_position(const int8_t height, const int8_t forward_back)

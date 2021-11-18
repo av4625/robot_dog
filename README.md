@@ -43,8 +43,8 @@ using an easing out curve like a sine curve)
 - [ ] Set starting position of robot so we dont have to rely on center joysticks
 - [ ] Make calculations mockable so the `two_axis_leg` tests are better (
 templated `constrict` holding me back)
-- [ ] Take the servo pins in the constructors of the robot and leg impls so the
-interfaces don't need to know how many pins a specific impl will need in
+- [x] Take the servo pins in the constructor of the leg impls so the interfaces
+don't need to know how many pins a specific impl will need in
 the begin function?
 - [ ] Should dog `set_position` invert the forward back position so that when
 you set the dog position forward the body goes forward and the leg goes back?

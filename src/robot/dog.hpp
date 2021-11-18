@@ -19,11 +19,7 @@ public:
         std::unique_ptr<leg> front_right,
         std::unique_ptr<leg> rear_right);
 
-    void begin(
-        uint8_t front_left_shoulder_pin, uint8_t front_left_knee_pin,
-        uint8_t rear_left_shoulder_pin, uint8_t rear_left_knee_pin,
-        uint8_t front_right_shoulder_pin, uint8_t front_right_knee_pin,
-        uint8_t rear_right_shoulder_pin, uint8_t rear_right_knee_pin) override;
+    void begin() override;
 
     void set_position(int8_t height, int8_t forward_back) override;
 
