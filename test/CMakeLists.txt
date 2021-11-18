@@ -20,7 +20,6 @@ include_directories(${SRC_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(hal)
-add_subdirectory(input_devices)
 add_subdirectory(mathmatics)
 add_subdirectory(robot)
 
