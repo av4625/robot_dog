@@ -2,10 +2,10 @@ name: Unittests
 'on':
   push:
     branches:
-      - master
+      - '**'
   pull_request:
     branches:
-      - master
+      - '**'
 jobs:
   Build:
     runs-on: '${{ matrix.os }}'
@@ -43,4 +43,3 @@ jobs:
       - name: Run tests
         working-directory: ./test/build
         run: ctest
-

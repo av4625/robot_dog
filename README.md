@@ -66,3 +66,23 @@ pins should work, pins may/may not need changed
 for other models)
 * Power supply for the servos (I use a 2 cell, 7.4v lipo regulated to 6v)
 * 3D Printer
+
+## Thoughts
+* Have a global shared pointer to a manager that is a state machine. Different
+states would be different "modes".
+    * Mode for triming servos to correct angle.
+    * Mode for leaning.
+    * Mode for walking.
+    * Etc
+* Simple Version
+    * On PS4 controller event call through to the manager with the event.
+        * This will happen on core `0` as the PS4 controller events run there.
+    * On core `1` continually call update on the robot.
+    * Need to think whether the manager/dog/leg/interpolation/servo will be
+    happy with this happening on 2 cores.
+* Save to Atomic Variables
+    * Have atomic variables for stick position etc and only call through to
+    control the robot on core `1` using the atomic variables that would be set
+    from core `0`.
+* Event Loop
+    * Have an event loop (or 2) to run things on specific cores.
