@@ -39,10 +39,14 @@ required to move the joints to the zero position
 using an easing out curve like a sine curve)
 - [x] Add hal for RAMP library
 - [x] Use hal RAMP for interpolation
+- [ ] Try slower max speed for servos or different curve to make movement
+smoother, or add an additional smoothing that has a bias for the previous value
+as the interpolation doesn't get to use the sine wave to ease out if the inputs
+constantly change
 - [ ] Change max height depending on forward/back amount?
 - [ ] Set starting position of robot so we dont have to rely on center joysticks
-- [ ] Make calculations mockable so the `two_axis_leg` tests are better (
-templated `constrict` holding me back)
+- [ ] Make calculations mockable so the `two_axis_leg` tests are better
+(templated `constrict` holding me back)
 - [x] Take the servo pins in the constructor of the leg impls so the interfaces
 don't need to know how many pins a specific impl will need in
 the begin function?
@@ -79,10 +83,15 @@ states would be different "modes".
         * This will happen on core `0` as the PS4 controller events run there.
     * On core `1` continually call update on the robot.
     * Need to think whether the manager/dog/leg/interpolation/servo will be
-    happy with this happening on 2 cores.
+    happy with this happening on 2 cores. Semaphore?
 * Save to Atomic Variables
     * Have atomic variables for stick position etc and only call through to
     control the robot on core `1` using the atomic variables that would be set
     from core `0`.
 * Event Loop
     * Have an event loop (or 2) to run things on specific cores.
+    * Have event loop on core `1` at a higher priority than the updating robot
+    task. Then when an interesting controller event happens, post the call on
+    the event loop. Core `1` can't run two things in parallel so theres no
+    worries about "strange" things happening. Need to make sure that the event
+    executes the events quickly even with the updating task being quite busy.

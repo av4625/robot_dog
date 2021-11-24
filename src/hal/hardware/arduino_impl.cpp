@@ -32,6 +32,11 @@ unsigned long arduino_impl::millis() const
     return ::millis();
 }
 
+void arduino_impl::delay(const uint32_t milliseconds) const
+{
+    ::delay(milliseconds);
+}
+
 void arduino_impl::print(const char* message) const
 {
     Serial.print(message);

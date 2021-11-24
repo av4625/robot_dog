@@ -60,7 +60,7 @@ void setup()
 
     xTaskCreatePinnedToCore(
         set_leg_position,   // Task function.
-        "Task2",            // Name of task.
+        "Task1",            // Name of task.
         10000,              // Stack size of task
         NULL,               // Parameter of the task
         0,                  // Priority of the task
@@ -75,44 +75,39 @@ void loop()
 
 void ps4_controller_connected()
 {
-    // Flash lights and rumble?
-    arduino->println(xPortGetCoreID());
+    xTaskCreatePinnedToCore(
+        connected_lights,   // Task function.
+        "Task2",            // Name of task.
+        10000,              // Stack size of task
+        NULL,               // Parameter of the task
+        1,                  // Priority of the task
+        NULL,               // Task handle to keep track of created task
+        1);                 // Pin task to core 1
 }
 
 void ps4_controller_event()
 {
-    arduino->println(xPortGetCoreID());
+    if(PS4.event.analog_move.stick.rx)
+    {
+        forward_back = PS4.data.analog.stick.rx;
+    }
+
+    if(PS4.event.analog_move.stick.ly)
+    {
+        height = PS4.data.analog.stick.ly;
+    }
 }
 
-void move_leg(void* params)
+void connected_lights(void* params)
 {
-    while(true)
-    {
-        delay(1250);
-        forward_back = INT8_MAX;
-        delay(1250);
-        forward_back = INT8_MIN;
-        delay(1250);
-        forward_back = 0;
-        delay(1250);
-        height = INT8_MAX;
-        delay(1250);
-        forward_back = INT8_MAX;
-        delay(1250);
-        forward_back = INT8_MIN;
-        delay(1250);
-        forward_back = 0;
-        delay(1250);
-        height = 0;
-        delay(1250);
-        forward_back = INT8_MAX;
-        delay(1250);
-        forward_back = INT8_MIN;
-        delay(1250);
-        forward_back = 0;
-        delay(1250);
-        height = INT8_MIN;
-    }
+    PS4.setRumble(0, 255);
+    PS4.setLed(255, 0, 0);
+    PS4.sendToController();
+    arduino->delay(1000);
+    PS4.setRumble(0, 0);
+    PS4.setLed(150, 0, 205);
+    PS4.sendToController();
+    vTaskDelete(NULL);
 }
 
 void set_leg_position(void* params)
