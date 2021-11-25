@@ -6,9 +6,10 @@
 #include "src/hal/hardware/arduino_impl.hpp"
 #include "src/hal/hardware/servo_impl.hpp"
 #include "src/hal/interpolation_impl.hpp"
+#include "src/mathmatics/calculations.hpp"
+#include "src/mathmatics/smoother_impl.hpp"
 #include "src/mathmatics/trigonometry/isosceles_triangle_impl.hpp"
 #include "src/mathmatics/trigonometry/right_angled_triangle_impl.hpp"
-#include "src/mathmatics/calculations.hpp"
 #include "src/robot/two_axis_leg.hpp"
 
 Servo shoulder;
@@ -25,6 +26,10 @@ std::unique_ptr<hal::interpolation> shoulder_interpolation{
     new hal::interpolation_impl()};
 std::unique_ptr<hal::interpolation> knee_interpolation{
     new hal::interpolation_impl()};
+std::unique_ptr<mathmatics::smoother> shoulder_smoother{
+    new mathmatics::smoother_impl(arduino)};
+std::unique_ptr<mathmatics::smoother> knee_smoother{
+    new mathmatics::smoother_impl(arduino)};
 
 const std::unique_ptr<robot::leg> leg{
     new robot::two_axis_leg(
@@ -36,6 +41,8 @@ const std::unique_ptr<robot::leg> leg{
         std::move(knee_servo),
         std::move(shoulder_interpolation),
         std::move(knee_interpolation),
+        std::move(shoulder_smoother),
+        std::move(knee_smoother),
         std::make_shared<const mathmatics::calculations>(),
         hal::hardware::D18,
         hal::hardware::D5)};
@@ -114,7 +121,7 @@ void set_leg_position(void* params)
 {
     while(true)
     {
-        leg->set_position(height, forward_back);
+        leg->set_position(height, forward_back, robot::movement::smooth);
         leg->update_position();
 
         // Try with micro second delay

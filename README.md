@@ -39,10 +39,16 @@ required to move the joints to the zero position
 using an easing out curve like a sine curve)
 - [x] Add hal for RAMP library
 - [x] Use hal RAMP for interpolation
-- [ ] Try slower max speed for servos or different curve to make movement
+- [x] Try slower max speed for servos or different curve to make movement
 smoother, or add an additional smoothing that has a bias for the previous value
 as the interpolation doesn't get to use the sine wave to ease out if the inputs
-constantly change
+constantly change. Keep interpolation for the gaits.
+- [x] Figure out how to make both joints get to the destination angle at the
+same time when using smoothing (This might actually happen for free because it
+uses percentages)
+- [ ] Figure out the relationship in smoothing between the percentage of the
+previous value and how long it takes (and how many steps it takes) to get to the
+destination
 - [ ] Change max height depending on forward/back amount?
 - [ ] Set starting position of robot so we dont have to rely on center joysticks
 - [ ] Make calculations mockable so the `two_axis_leg` tests are better

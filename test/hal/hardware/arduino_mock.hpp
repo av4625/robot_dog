@@ -17,11 +17,14 @@ public:
     MOCK_CONST_METHOD1(digital_read, int(uint8_t pin));
     MOCK_CONST_METHOD1(analog_read, uint16_t(uint8_t pin));
     MOCK_CONST_METHOD0(millis, unsigned long());
+    MOCK_CONST_METHOD1(delay, void(uint32_t milliseconds));
     MOCK_CONST_METHOD1(print, void(const char* message));
     MOCK_CONST_METHOD1(print, void(int message));
+    MOCK_CONST_METHOD1(print, void(uint32_t message));
     MOCK_CONST_METHOD1(print, void(double message));
     MOCK_CONST_METHOD1(println, void(const char* message));
     MOCK_CONST_METHOD1(println, void(int message));
+    MOCK_CONST_METHOD1(println, void(uint32_t message));
     MOCK_CONST_METHOD1(println, void(double message));
 };
 

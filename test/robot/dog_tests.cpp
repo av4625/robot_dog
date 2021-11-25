@@ -55,10 +55,15 @@ TEST_F(DogTests, BeginWillCallBeginForAllLegs)
 
 TEST_F(DogTests, SetPositionWillCallSetPositionForAllLegs)
 {
-    EXPECT_CALL(*front_left_ptr_, set_position(1, 2));
-    EXPECT_CALL(*rear_left_ptr_, set_position(1, 2));
-    EXPECT_CALL(*front_right_ptr_, set_position(1, 2));
-    EXPECT_CALL(*rear_right_ptr_, set_position(1, 2));
+    EXPECT_CALL(*front_left_ptr_, set_position(
+        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+    EXPECT_CALL(*rear_left_ptr_, set_position(
+        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+    EXPECT_CALL(*front_right_ptr_, set_position(
+        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+    EXPECT_CALL(*rear_right_ptr_, set_position(
+        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+
     dog_.set_position(1, 2);
 }
 

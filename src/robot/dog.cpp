@@ -25,10 +25,10 @@ void dog::begin()
 
 void dog::set_position(const int8_t height, const int8_t forward_back)
 {
-    front_left_->set_position(height, forward_back);
-    rear_left_->set_position(height, forward_back);
-    front_right_->set_position(height, forward_back);
-    rear_right_->set_position(height, forward_back);
+    front_left_->set_position(height, forward_back, movement::interpolation);
+    rear_left_->set_position(height, forward_back, movement::interpolation);
+    front_right_->set_position(height, forward_back, movement::interpolation);
+    rear_right_->set_position(height, forward_back, movement::interpolation);
 }
 
 void dog::update_position()

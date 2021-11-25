@@ -6,6 +6,7 @@
 #include "../hal/hardware/servo.hpp"
 #include "../hal/interpolation.hpp"
 #include "../mathmatics/calculations.hpp"
+#include "../mathmatics/smoother.hpp"
 #include "../mathmatics/trigonometry/isosceles_triangle.hpp"
 #include "../mathmatics/trigonometry/right_angled_triangle.hpp"
 
@@ -24,13 +25,16 @@ public:
         std::unique_ptr<hal::hardware::servo> knee,
         std::unique_ptr<hal::interpolation> shoulder_interpolation,
         std::unique_ptr<hal::interpolation> knee_interpolation,
+        std::unique_ptr<mathmatics::smoother> shoulder_smoother,
+        std::unique_ptr<mathmatics::smoother> knee_smoother,
         const std::shared_ptr<const mathmatics::calculations>& calc,
         uint8_t shoulder_pin,
         uint8_t knee_pin);
 
     void begin() override;
 
-    void set_position(int8_t height, int8_t forward_back) override;
+    void set_position(
+        int8_t height, int8_t forward_back, movement move_type) override;
 
     void update_position() override;
 
@@ -43,6 +47,8 @@ private:
     const std::unique_ptr<hal::hardware::servo> knee_;
     const std::unique_ptr<hal::interpolation> shoulder_interpolation_;
     const std::unique_ptr<hal::interpolation> knee_interpolation_;
+    const std::unique_ptr<mathmatics::smoother> shoulder_smoother_;
+    const std::unique_ptr<mathmatics::smoother> knee_smoother_;
     const std::shared_ptr<const mathmatics::calculations> calc_;
     const uint8_t shoulder_pin_;
     const uint8_t knee_pin_;
@@ -56,8 +62,23 @@ private:
     short previous_knee_microseconds_;
     int8_t previous_forward_back_;
     int8_t previous_height_;
+    movement current_move_type_;
 
-    void set_new_servo_positions(float shoulder_angle, float knee_angle);
+    std::pair<float, float> generate_angles(
+        int8_t height, int8_t forward_back) const;
+
+    std::pair<short, short> calculate_servo_microseconds(
+        float shoulder_angle, float knee_angle) const;
+
+    void set_new_servo_positions_interpolation(
+        short shoulder_microseconds, short knee_microseconds);
+
+    void set_new_servo_positions_smooth(
+        short shoulder_microseconds, short knee_microseconds);
+
+    void update_interpolation();
+
+    void update_smooth();
 };
 
 }

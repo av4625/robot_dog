@@ -12,7 +12,7 @@ class leg_mock : public leg
 public:
     MOCK_METHOD0(begin, void());
 
-    MOCK_METHOD2(set_position, void(int8_t height, int8_t forward_back));
+    MOCK_METHOD3(set_position, void(int8_t height, int8_t forward_back, movement move_type));
 
     MOCK_METHOD0(update_position, void());
 };
