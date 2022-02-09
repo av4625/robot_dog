@@ -1,49 +1,33 @@
 #include <atomic>
 #include <memory>
 
+#include <ESP32PWM.h>
 #include <PS4Controller.h>
 
 #include "src/hal/hardware/arduino_impl.hpp"
-#include "src/hal/hardware/servo_impl.hpp"
-#include "src/hal/interpolation_impl.hpp"
-#include "src/mathmatics/calculations.hpp"
-#include "src/mathmatics/smoother_impl.hpp"
-#include "src/mathmatics/trigonometry/isosceles_triangle_impl.hpp"
-#include "src/mathmatics/trigonometry/right_angled_triangle_impl.hpp"
-#include "src/robot/two_axis_leg.hpp"
+#include "src/hal/hardware/gamepad_factory_impl.hpp"
+#include "src/hal/robot/leg_factory_impl.hpp"
 
-Servo shoulder;
-Servo knee;
+void ps4_controller_connected();
+void ps4_controller_event(int8_t forward_back, int8_t height);
 
 const std::shared_ptr<hal::hardware::arduino> arduino{
     std::make_shared<hal::hardware::arduino_impl>()};
 
-std::unique_ptr<hal::hardware::servo> shoulder_servo{
-    new hal::hardware::servo_impl()};
-std::unique_ptr<hal::hardware::servo> knee_servo{
-    new hal::hardware::servo_impl()};
-std::unique_ptr<hal::interpolation> shoulder_interpolation{
-    new hal::interpolation_impl()};
-std::unique_ptr<hal::interpolation> knee_interpolation{
-    new hal::interpolation_impl()};
-std::unique_ptr<mathmatics::smoother> shoulder_smoother{
-    new mathmatics::smoother_impl(arduino)};
-std::unique_ptr<mathmatics::smoother> knee_smoother{
-    new mathmatics::smoother_impl(arduino)};
+const std::shared_ptr<hal::hardware::gamepad_factory> gamepad_factory{
+    std::make_shared<hal::hardware::gamepad_factory_impl>()};
+const std::shared_ptr<hal::hardware::gamepad> gamepad{
+    gamepad_factory->create_ps4_gamepad(
+        "01:01:01:01:01:01",
+        &ps4_controller_connected,
+        &ps4_controller_event)};
 
+const std::unique_ptr<hal::robot::leg_factory> leg_factory{
+    new hal::robot::leg_factory_impl()};
 const std::unique_ptr<robot::leg> leg{
-    new robot::two_axis_leg(
-        std::make_shared<
-            mathmatics::trigonometry::right_angled_triangle_impl>(),
-        std::make_shared<
-            mathmatics::trigonometry::isosceles_triangle_impl>(55),
-        std::move(shoulder_servo),
-        std::move(knee_servo),
-        std::move(shoulder_interpolation),
-        std::move(knee_interpolation),
-        std::move(shoulder_smoother),
-        std::move(knee_smoother),
-        std::make_shared<const mathmatics::calculations>(),
+    leg_factory->create(
+        robot::leg_type::two_axis,
+        arduino,
         hal::hardware::D18,
         hal::hardware::D5)};
 
@@ -53,10 +37,7 @@ std::atomic<int8_t> height{0};
 void setup()
 {
     arduino->begin(115200);
-
-    PS4.attach(ps4_controller_event);
-    PS4.begin("01:01:01:01:01:01");
-    PS4.attachOnConnect(ps4_controller_connected);
+    gamepad->begin();
 
     ESP32PWM::allocateTimer(0);
     ESP32PWM::allocateTimer(1);
@@ -92,28 +73,25 @@ void ps4_controller_connected()
         1);                 // Pin task to core 1
 }
 
-void ps4_controller_event()
+void ps4_controller_event(const int8_t forward_back, const int8_t height)
 {
-    if(PS4.event.analog_move.stick.rx)
-    {
-        forward_back = PS4.data.analog.stick.rx;
-    }
-
-    if(PS4.event.analog_move.stick.ly)
-    {
-        height = PS4.data.analog.stick.ly;
-    }
+    ::forward_back = forward_back;
+    ::height = height;
 }
 
 void connected_lights(void* params)
 {
-    PS4.setRumble(0, 255);
-    PS4.setLed(255, 0, 0);
-    PS4.sendToController();
-    arduino->delay(1000);
-    PS4.setRumble(0, 0);
-    PS4.setLed(150, 0, 205);
-    PS4.sendToController();
+    if (gamepad)
+    {
+        gamepad->set_rumble(0, 255);
+        gamepad->set_led(255, 0, 0);
+        gamepad->send();
+        arduino->delay(1000);
+        gamepad->set_rumble(0, 0);
+        gamepad->set_led(150, 0, 205);
+        gamepad->send();
+    }
+
     vTaskDelete(NULL);
 }
 
