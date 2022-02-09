@@ -12,11 +12,17 @@ namespace trigonometry
 class right_angled_triangle_mock : public right_angled_triangle
 {
 public:
-    MOCK_CONST_METHOD2(generate_angles, std::tuple<float, float, float>(
-        float side_a_length, float side_b_length));
+    MOCK_METHOD(
+        (std::tuple<float, float, float>),
+        generate_angles, (
+        float side_a_length, float side_b_length),
+        (const, override));
 
-    MOCK_CONST_METHOD2(calculate_hypotenuse, float(
-        float side_a_length, float side_b_length));
+    MOCK_METHOD(
+        float,
+        calculate_hypotenuse, (
+        float side_a_length, float side_b_length),
+        (const, override));
 };
 
 }

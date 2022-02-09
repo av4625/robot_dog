@@ -10,9 +10,9 @@ namespace mathmatics
 class smoother_mock : public smoother
 {
 public:
-    MOCK_METHOD2(start, void(short start, short destination));
-    MOCK_METHOD0(get_value, short());
-    MOCK_CONST_METHOD0(is_finished, bool());
+    MOCK_METHOD(void, start, (short start, short destination), (override));
+    MOCK_METHOD(short, get_value, (), (override));
+    MOCK_METHOD(bool, is_finished, (), (const, override));
 };
 
 }

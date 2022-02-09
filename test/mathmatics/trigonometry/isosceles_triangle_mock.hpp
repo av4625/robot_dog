@@ -12,8 +12,11 @@ namespace trigonometry
 class isosceles_triangle_mock : public isosceles_triangle
 {
 public:
-    MOCK_CONST_METHOD1(generate_angles, std::tuple<float, float, float>(
-        float side_c_length));
+    MOCK_METHOD(
+        (std::tuple<float, float, float>),
+        generate_angles,
+        (float side_c_length),
+        (const, override));
 };
 
 }

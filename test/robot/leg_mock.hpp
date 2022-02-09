@@ -10,11 +10,15 @@ namespace robot
 class leg_mock : public leg
 {
 public:
-    MOCK_METHOD0(begin, void());
+    MOCK_METHOD(void, begin, (), (override));
 
-    MOCK_METHOD3(set_position, void(int8_t height, int8_t forward_back, movement move_type));
+    MOCK_METHOD(
+        void,
+        set_position,
+        (int8_t height, int8_t forward_back, movement move_type),
+        (override));
 
-    MOCK_METHOD0(update_position, void());
+    MOCK_METHOD(void, update_position, (), (override));
 };
 
 }

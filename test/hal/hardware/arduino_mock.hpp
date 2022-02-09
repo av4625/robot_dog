@@ -12,20 +12,21 @@ namespace hardware
 class arduino_mock : public arduino
 {
 public:
-    MOCK_CONST_METHOD1(begin, void(unsigned long serial_baud_rate));
-    MOCK_CONST_METHOD2(pin_mode, void(uint8_t pin, uint8_t mode));
-    MOCK_CONST_METHOD1(digital_read, int(uint8_t pin));
-    MOCK_CONST_METHOD1(analog_read, uint16_t(uint8_t pin));
-    MOCK_CONST_METHOD0(millis, unsigned long());
-    MOCK_CONST_METHOD1(delay, void(uint32_t milliseconds));
-    MOCK_CONST_METHOD1(print, void(const char* message));
-    MOCK_CONST_METHOD1(print, void(int message));
-    MOCK_CONST_METHOD1(print, void(uint32_t message));
-    MOCK_CONST_METHOD1(print, void(double message));
-    MOCK_CONST_METHOD1(println, void(const char* message));
-    MOCK_CONST_METHOD1(println, void(int message));
-    MOCK_CONST_METHOD1(println, void(uint32_t message));
-    MOCK_CONST_METHOD1(println, void(double message));
+    MOCK_METHOD(
+        void, begin, (unsigned long serial_baud_rate), (const, override));
+    MOCK_METHOD(void, pin_mode, (uint8_t pin, uint8_t mode), (const, override));
+    MOCK_METHOD(int, digital_read, (uint8_t pin), (const, override));
+    MOCK_METHOD(uint16_t, analog_read, (uint8_t pin), (const, override));
+    MOCK_METHOD(unsigned long, millis, (), (const, override));
+    MOCK_METHOD(void, delay, (uint32_t milliseconds), (const, override));
+    MOCK_METHOD(void, print, (const char* message), (const, override));
+    MOCK_METHOD(void, print, (int message), (const, override));
+    MOCK_METHOD(void, print, (uint32_t message), (const, override));
+    MOCK_METHOD(void, print, (double message), (const, override));
+    MOCK_METHOD(void, println, (const char* message), (const, override));
+    MOCK_METHOD(void, println, (int message), (const, override));
+    MOCK_METHOD(void, println, (uint32_t message), (const, override));
+    MOCK_METHOD(void, println, (double message), (const, override));
 };
 
 }

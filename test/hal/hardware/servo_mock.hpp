@@ -12,10 +12,14 @@ namespace hardware
 class servo_mock : public servo
 {
 public:
-    MOCK_METHOD1(begin, void(uint8_t pin));
-    MOCK_METHOD1(write_microseconds, void(short microseconds));
-    MOCK_CONST_METHOD0(get_minimum_time_for_180, short());
-    MOCK_CONST_METHOD0(get_microsecond_values, const std::pair<short, short>&());
+    MOCK_METHOD(void, begin, (uint8_t pin), (override));
+    MOCK_METHOD(void, write_microseconds, (short microseconds), (override));
+    MOCK_METHOD(short, get_minimum_time_for_180, (), (const, override));
+    MOCK_METHOD(
+        (const std::pair<short, short>&),
+        get_microsecond_values,
+        (),
+        (const, override));
 };
 
 }
