@@ -59,6 +59,11 @@ the begin function?
 - [ ] Should dog `set_position` invert the forward back position so that when
 you set the dog position forward the body goes forward and the leg goes back?
 - [x] Write code to position all legs independently
+- [ ] Make the event callback in `ps4_controller` return optional values, if its
+not updated it will return 0 which is not what we want. (No std::optional in
+C++14 :cry-face:)
+- [ ] Make `set_position ` in `two_axis_leg` default to previous `forward_back`
+and previous `height` if new ones aren't provided
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
 - [ ] Statemachine for different modes controlled by the PS4 remote
@@ -67,6 +72,11 @@ you set the dog position forward the body goes forward and the leg goes back?
 ### Stretch Goals
 - [ ] Position a single foot in Y space (Right Angled Triangle). Requires a hip
 design for the dog and more servos
+- [ ] Add an event loop so that it is easier to control what happens on what
+cores. Currently the gamepad calls a callback with the updated values, the
+callback sets atomic variables that then are read by core `1`. This is abit
+"nasty" but if I call the leg/robot/controller functions in the callback they
+will be executed on core one, possibly slowing down reading from the gamepad.
 
 ## Dependencies
 * Conan: Package manager for C++. Used to get GoogleTest for the unit tests
