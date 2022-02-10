@@ -13,10 +13,12 @@ std::weak_ptr<ps4_controller> ps4_controller::instance_{};
 ps4_controller::ps4_controller(
     const std::string& mac_address,
     std::function<void()> connected_callback,
-    std::function<void(int8_t, int8_t)> event_callback) :
-        mac_address_(mac_address),
-        connected_callback_(std::move(connected_callback)),
-        event_callback_(std::move(event_callback))
+    std::function<void(
+        std::pair<int8_t, bool>&&,
+        std::pair<int8_t, bool>&&)> event_callback) :
+            mac_address_(mac_address),
+            connected_callback_(std::move(connected_callback)),
+            event_callback_(std::move(event_callback))
 {
 }
 
@@ -59,20 +61,28 @@ void ps4_controller::event_callback()
 
     if (instance)
     {
-        int8_t forward_back;
-        int8_t height;
+        std::pair<int8_t, bool> forward_back;
+        std::pair<int8_t, bool> height;
 
         if(PS4.event.analog_move.stick.rx)
         {
-            forward_back = PS4.data.analog.stick.rx;
+            forward_back = std::make_pair(PS4.data.analog.stick.rx, true);
+        }
+        else
+        {
+            forward_back = std::make_pair(0, false);
         }
 
         if(PS4.event.analog_move.stick.ly)
         {
-            height = PS4.data.analog.stick.ly;
+            height = std::make_pair(PS4.data.analog.stick.ly, true);
+        }
+        else
+        {
+            height = std::make_pair(0, false);
         }
 
-        instance->event_callback_(forward_back, height);
+        instance->event_callback_(std::move(forward_back), std::move(height));
     }
 }
 

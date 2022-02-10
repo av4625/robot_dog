@@ -12,10 +12,17 @@ namespace hardware
 class gamepad_factory_mock : public gamepad_factory
 {
 public:
-    MOCK_METHOD(std::shared_ptr<gamepad>, create_ps4_gamepad, (
-        const std::string& mac_address,
-        std::function<void()> connected_callback,
-        std::function<void(int8_t, int8_t)> event_callback), (const, override));
+    MOCK_METHOD(
+        std::shared_ptr<gamepad>,
+        create_ps4_gamepad,
+        (
+            const std::string& mac_address,
+            std::function<void()> connected_callback,
+            std::function<void(
+                std::pair<int8_t, bool>&&,
+                std::pair<int8_t, bool>&&)> event_callback
+        ),
+        (const, override));
 };
 
 }

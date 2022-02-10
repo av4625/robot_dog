@@ -59,7 +59,7 @@ the begin function?
 - [ ] Should dog `set_position` invert the forward back position so that when
 you set the dog position forward the body goes forward and the leg goes back?
 - [x] Write code to position all legs independently
-- [ ] Make the event callback in `ps4_controller` return optional values, if its
+- [x] Make the event callback in `ps4_controller` return optional values, if its
 not updated it will return 0 which is not what we want. (No std::optional in
 C++14 :cry-face:)
 - [ ] Make `set_position ` in `two_axis_leg` default to previous `forward_back`

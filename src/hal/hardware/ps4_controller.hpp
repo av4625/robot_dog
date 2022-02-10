@@ -2,9 +2,11 @@
 #define HAL_HARDWARE_PS4_CONTROLLER_HPP
 
 #include "gamepad.hpp"
-#include "gamepad_factory_impl.hpp"
 
 #include <memory>
+#include <utility>
+
+#include "gamepad_factory_impl.hpp"
 
 namespace hal
 {
@@ -17,7 +19,9 @@ public:
     ps4_controller(
         const std::string& mac_address,
         std::function<void()> connected_callback,
-        std::function<void(int8_t, int8_t)> event_callback);
+        std::function<void(
+            std::pair<int8_t, bool>&&,
+            std::pair<int8_t, bool>&&)> event_callback);
 
     void begin() const override;
 
@@ -28,6 +32,8 @@ public:
     void send() const override;
 
 private:
+    friend class gamepad_factory_impl;
+
     static void connected_callback();
     static void event_callback();
 
@@ -42,9 +48,9 @@ private:
 
     const std::string mac_address_;
     const std::function<void()> connected_callback_;
-    const std::function<void(int8_t, int8_t)> event_callback_;
-
-    friend class gamepad_factory_impl;
+    const std::function<void(
+        std::pair<int8_t, bool>&&,
+        std::pair<int8_t, bool>&&)> event_callback_;
 };
 
 }

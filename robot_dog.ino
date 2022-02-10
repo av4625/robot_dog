@@ -1,5 +1,6 @@
 #include <atomic>
 #include <memory>
+#include <utility>
 
 #include <ESP32PWM.h>
 #include <PS4Controller.h>
@@ -9,7 +10,8 @@
 #include "src/hal/robot/leg_factory_impl.hpp"
 
 void ps4_controller_connected();
-void ps4_controller_event(int8_t forward_back, int8_t height);
+void ps4_controller_event(
+    std::pair<int8_t, bool>&& forward_back, std::pair<int8_t, bool>&& height);
 
 const std::shared_ptr<hal::hardware::arduino> arduino{
     std::make_shared<hal::hardware::arduino_impl>()};
@@ -73,10 +75,18 @@ void ps4_controller_connected()
         1);                 // Pin task to core 1
 }
 
-void ps4_controller_event(const int8_t forward_back, const int8_t height)
+void ps4_controller_event(
+    std::pair<int8_t, bool>&& forward_back, std::pair<int8_t, bool>&& height)
 {
-    ::forward_back = forward_back;
-    ::height = height;
+    if (forward_back.second)
+    {
+        ::forward_back = forward_back.first;
+    }
+
+    if (height.second)
+    {
+        ::height = height.first;
+    }
 }
 
 void connected_lights(void* params)
