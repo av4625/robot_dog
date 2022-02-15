@@ -10,22 +10,32 @@ namespace hal
 class interpolation_mock : public interpolation
 {
 public:
-    MOCK_METHOD4(start, void(
-        int range_start,
-        int range_end,
-        unsigned long duration,
-        interpolation_curve curve));
+    MOCK_METHOD(
+        void,
+        start,
+        (
+            int range_start,
+            int range_end,
+            unsigned long duration,
+            interpolation_curve curve
+        ),
+        (override));
 
-    MOCK_METHOD5(start, void(
-        int range_start,
-        int range_end,
-        unsigned long duration,
-        interpolation_curve curve,
-        int grain));
+    MOCK_METHOD(
+        void,
+        start,
+        (
+            int range_start,
+            int range_end,
+            unsigned long duration,
+            interpolation_curve curve,
+            int grain
+        ),
+        (override));
 
-    MOCK_METHOD0(get_value, int());
+    MOCK_METHOD(int, get_value, (), (override));
 
-    MOCK_METHOD0(is_finished, bool());
+    MOCK_METHOD(bool, is_finished, (), (override));
 };
 
 }

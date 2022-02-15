@@ -24,7 +24,7 @@ Initial design for the leg that I have been using for testing.
 - [x] Buy more servos for more legs
 - [ ] New upper leg design so that there is some natural compliance at the
 joints
-- [ ] Make 3 more legs
+- [x] Make 3 more legs
 - [ ] Make the dogs body
 
 ## Code
@@ -50,7 +50,7 @@ uses percentages)
 previous value and how long it takes (and how many steps it takes) to get to the
 destination
 - [ ] Change max height depending on forward/back amount?
-- [ ] Set starting position of robot so we dont have to rely on center joysticks
+- [x] Set starting position of robot so we dont have to rely on center joysticks
 - [ ] Make calculations mockable so the `two_axis_leg` tests are better
 (templated `constrict` holding me back)
 - [x] Take the servo pins in the constructor of the leg impls so the interfaces
@@ -63,7 +63,7 @@ you set the dog position forward the body goes forward and the leg goes back?
 not updated it will return 0 which is not what we want. (No std::optional in
 C++14 :cry-face:)
 - [ ] Make `set_position ` in `two_axis_leg` default to previous `forward_back`
-and previous `height` if new ones aren't provided
+and previous `height` if new ones aren't provided?
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
 - [ ] Statemachine for different modes controlled by the PS4 remote

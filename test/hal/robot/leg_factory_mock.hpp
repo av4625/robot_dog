@@ -9,7 +9,7 @@ namespace hal
 namespace robot
 {
 
-class leg_factory_mock
+class leg_factory_mock : public leg_factory
 {
 public:
     MOCK_METHOD(
