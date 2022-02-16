@@ -398,4 +398,46 @@ TEST_F(TwoAxisLegTests,
     two_axis_leg_->set_position(127, -128, movement::smooth);
 }
 
+TEST_F(TwoAxisLegTests, SetHeightWillUsePreviousForwardBack)
+{
+    set_max_height_and_forward_smooth(2);
+
+    EXPECT_CALL(*forward_back_triangle_mock_, calculate_hypotenuse(30, 40))
+        .WillOnce(::testing::Return(75));
+    EXPECT_CALL(*forward_back_triangle_mock_, generate_angles(30, 40))
+        .WillOnce(::testing::Return(std::make_tuple(10.0, 20.0, 30.0)));
+    EXPECT_CALL(*height_triangle_mock_, generate_angles(75))
+        .WillOnce(::testing::Return(std::make_tuple(40.0, 50.0, 60.0)));
+
+    EXPECT_CALL(*shoulder_smoother_mock_ptr_, start(
+        ::testing::_,
+        ::testing::_));
+    EXPECT_CALL(*knee_smoother_mock_ptr_, start(
+        ::testing::_,
+        ::testing::_));
+
+    two_axis_leg_->set_height(-128, movement::smooth);
+}
+
+TEST_F(TwoAxisLegTests, SetForwardBackWillUsePreviousHeight)
+{
+    set_max_height_and_forward_smooth(2);
+
+    EXPECT_CALL(*forward_back_triangle_mock_, calculate_hypotenuse(-30, 95))
+        .WillOnce(::testing::Return(75));
+    EXPECT_CALL(*forward_back_triangle_mock_, generate_angles(-30, 95))
+        .WillOnce(::testing::Return(std::make_tuple(10.0, 20.0, 30.0)));
+    EXPECT_CALL(*height_triangle_mock_, generate_angles(75))
+        .WillOnce(::testing::Return(std::make_tuple(40.0, 50.0, 60.0)));
+
+    EXPECT_CALL(*shoulder_smoother_mock_ptr_, start(
+        ::testing::_,
+        ::testing::_));
+    EXPECT_CALL(*knee_smoother_mock_ptr_, start(
+        ::testing::_,
+        ::testing::_));
+
+    two_axis_leg_->set_forward_back(-128, movement::smooth);
+}
+
 }

@@ -92,6 +92,17 @@ void two_axis_leg::set_position(
     }
 }
 
+void two_axis_leg::set_height(const int8_t height, const movement move_type)
+{
+    set_position(height, previous_forward_back_, move_type);
+}
+
+void two_axis_leg::set_forward_back(
+    const int8_t forward_back, const movement move_type)
+{
+    set_position(previous_height_, forward_back, move_type);
+}
+
 void two_axis_leg::update_position()
 {
     switch (current_move_type_)

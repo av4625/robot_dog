@@ -18,6 +18,15 @@ public:
         (int8_t height, int8_t forward_back, movement move_type),
         (override));
 
+    MOCK_METHOD(
+        void, set_height, (int8_t height, movement move_type), (override));
+
+    MOCK_METHOD(
+        void,
+        set_forward_back,
+        (int8_t forward_back, movement move_type),
+        (override));
+
     MOCK_METHOD(void, update_position, (), (override));
 };
 

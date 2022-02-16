@@ -62,8 +62,11 @@ you set the dog position forward the body goes forward and the leg goes back?
 - [x] Make the event callback in `ps4_controller` return optional values, if its
 not updated it will return 0 which is not what we want. (No std::optional in
 C++14 :cry-face:)
-- [ ] Make `set_position ` in `two_axis_leg` default to previous `forward_back`
-and previous `height` if new ones aren't provided?
+- [x] Make `set_position ` in `two_axis_leg` default to previous `forward_back`
+and previous `height` if new ones aren't provided? (Created `set_height` and
+`set_forward_back` that uses `set_position`)
+- [ ] If the movement type isn't the same as the movement type before do I need
+to clear down the smoother/interpolator?
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
 - [ ] Statemachine for different modes controlled by the PS4 remote

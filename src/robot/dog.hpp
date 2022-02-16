@@ -23,6 +23,10 @@ public:
 
     void set_position(int8_t height, int8_t forward_back) override;
 
+    void set_height(int8_t height) override;
+
+    void set_forward_back(int8_t forward_back) override;
+
     void update_position() override;
 
 private:

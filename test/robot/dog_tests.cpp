@@ -56,15 +56,43 @@ TEST_F(DogTests, BeginWillCallBeginForAllLegs)
 TEST_F(DogTests, SetPositionWillCallSetPositionForAllLegs)
 {
     EXPECT_CALL(*front_left_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+        1, 2, ::testing::Matcher<movement>(movement::smooth)));
     EXPECT_CALL(*rear_left_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+        1, 2, ::testing::Matcher<movement>(movement::smooth)));
     EXPECT_CALL(*front_right_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+        1, 2, ::testing::Matcher<movement>(movement::smooth)));
     EXPECT_CALL(*rear_right_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::interpolation)));
+        1, 2, ::testing::Matcher<movement>(movement::smooth)));
 
     dog_.set_position(1, 2);
+}
+
+TEST_F(DogTests, SetHeightWillCallSetHeightForAllLegs)
+{
+    EXPECT_CALL(*front_left_ptr_, set_height(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+    EXPECT_CALL(*rear_left_ptr_, set_height(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+    EXPECT_CALL(*front_right_ptr_, set_height(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+    EXPECT_CALL(*rear_right_ptr_, set_height(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+
+    dog_.set_height(1);
+}
+
+TEST_F(DogTests, SetForwardBackWillCallSetForwardBackForAllLegs)
+{
+    EXPECT_CALL(*front_left_ptr_, set_forward_back(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+    EXPECT_CALL(*rear_left_ptr_, set_forward_back(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+    EXPECT_CALL(*front_right_ptr_, set_forward_back(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+    EXPECT_CALL(*rear_right_ptr_, set_forward_back(
+        1, ::testing::Matcher<movement>(movement::smooth)));
+
+    dog_.set_forward_back(1);
 }
 
 TEST_F(DogTests, UpdatePositionWillCallUpdatePositionForAllLegs)
