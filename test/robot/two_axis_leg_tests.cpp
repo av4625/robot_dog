@@ -160,7 +160,7 @@ TEST_F(TwoAxisLegTests,
     set_max_height_and_forward_interpolation();
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
-        .WillOnce(::testing::Return(false));
+        .Times(2).WillRepeatedly(::testing::Return(false));
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, get_value())
         .WillOnce(::testing::Return(1));
@@ -170,7 +170,7 @@ TEST_F(TwoAxisLegTests,
     EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(1));
     EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(2));
 
-    two_axis_leg_->update_position();
+    EXPECT_FALSE(two_axis_leg_->update_position());
 }
 
 TEST_F(TwoAxisLegTests,
@@ -179,9 +179,9 @@ TEST_F(TwoAxisLegTests,
     set_max_height_and_forward_interpolation();
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
-        .WillOnce(::testing::Return(true));
+        .Times(2).WillRepeatedly(::testing::Return(true));
     EXPECT_CALL(*knee_interpolation_mock_ptr_, is_finished())
-        .WillOnce(::testing::Return(false));
+        .Times(2).WillRepeatedly(::testing::Return(false));
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, get_value())
         .WillOnce(::testing::Return(1));
@@ -191,7 +191,29 @@ TEST_F(TwoAxisLegTests,
     EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(1));
     EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(2));
 
-    two_axis_leg_->update_position();
+    EXPECT_FALSE(two_axis_leg_->update_position());
+}
+
+TEST_F(TwoAxisLegTests,
+    UpdatePositionWhenLastUpdateAndInterpolationWillUpdateServosAndReturnTrue)
+{
+    set_max_height_and_forward_interpolation();
+
+    EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
+        .Times(2).WillRepeatedly(::testing::Return(true));
+    EXPECT_CALL(*knee_interpolation_mock_ptr_, is_finished())
+        .WillOnce(::testing::Return(false))
+        .WillOnce(::testing::Return(true));
+
+    EXPECT_CALL(*shoulder_interpolation_mock_ptr_, get_value())
+        .WillOnce(::testing::Return(1));
+    EXPECT_CALL(*knee_interpolation_mock_ptr_, get_value())
+        .WillOnce(::testing::Return(2));
+
+    EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(1));
+    EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(2));
+
+    EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
 TEST_F(TwoAxisLegTests,
@@ -209,7 +231,7 @@ TEST_F(TwoAxisLegTests,
     EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(::testing::_))
         .Times(0);
 
-    two_axis_leg_->update_position();
+    EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
 TEST_F(TwoAxisLegTests,
@@ -218,7 +240,7 @@ TEST_F(TwoAxisLegTests,
     set_max_height_and_forward_smooth();
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
-        .WillOnce(::testing::Return(false));
+        .Times(2).WillRepeatedly(::testing::Return(false));
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, get_value())
         .WillOnce(::testing::Return(1));
@@ -228,7 +250,7 @@ TEST_F(TwoAxisLegTests,
     EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(1));
     EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(2));
 
-    two_axis_leg_->update_position();
+    EXPECT_FALSE(two_axis_leg_->update_position());
 }
 
 TEST_F(TwoAxisLegTests,
@@ -237,9 +259,9 @@ TEST_F(TwoAxisLegTests,
     set_max_height_and_forward_smooth();
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
-        .WillOnce(::testing::Return(true));
+        .Times(2).WillRepeatedly(::testing::Return(true));
     EXPECT_CALL(*knee_smoother_mock_ptr_, is_finished())
-        .WillOnce(::testing::Return(false));
+        .Times(2).WillRepeatedly(::testing::Return(false));
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, get_value())
         .WillOnce(::testing::Return(1));
@@ -249,7 +271,29 @@ TEST_F(TwoAxisLegTests,
     EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(1));
     EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(2));
 
-    two_axis_leg_->update_position();
+    EXPECT_FALSE(two_axis_leg_->update_position());
+}
+
+TEST_F(TwoAxisLegTests,
+    UpdatePositionWhenLastUpdateAndSmoothWillUpdateServosAndReturnTrue)
+{
+    set_max_height_and_forward_smooth();
+
+    EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
+        .Times(2).WillRepeatedly(::testing::Return(true));
+    EXPECT_CALL(*knee_smoother_mock_ptr_, is_finished())
+        .WillOnce(::testing::Return(false))
+        .WillOnce(::testing::Return(true));
+
+    EXPECT_CALL(*shoulder_smoother_mock_ptr_, get_value())
+        .WillOnce(::testing::Return(1));
+    EXPECT_CALL(*knee_smoother_mock_ptr_, get_value())
+        .WillOnce(::testing::Return(2));
+
+    EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(1));
+    EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(2));
+
+    EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
 TEST_F(TwoAxisLegTests,
@@ -267,7 +311,7 @@ TEST_F(TwoAxisLegTests,
     EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(::testing::_))
         .Times(0);
 
-    two_axis_leg_->update_position();
+    EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
 TEST_F(TwoAxisLegTests,

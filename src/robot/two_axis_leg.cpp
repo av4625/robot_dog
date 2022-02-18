@@ -103,20 +103,25 @@ void two_axis_leg::set_forward_back(
     set_position(previous_height_, forward_back, move_type);
 }
 
-void two_axis_leg::update_position()
+bool two_axis_leg::update_position()
 {
     switch (current_move_type_)
     {
         case movement::smooth:
-            update_smooth();
-            break;
+            return update_smooth();
         case movement::interpolation:
-            update_interpolation();
-            break;
+            return update_interpolation();
         default:
-            update_smooth();
-            break;
+            return update_smooth();
     }
+}
+
+void two_axis_leg::set_leg_straight_down()
+{
+    // Is the knee 180 or 0!?
+    const auto servo_values{
+        calculate_servo_microseconds(right_angle_radians, M_PI)};
+    set_new_servo_positions_smooth(servo_values.first, servo_values.second);
 }
 
 std::pair<float, float> two_axis_leg::generate_angles(
@@ -203,7 +208,7 @@ void two_axis_leg::set_new_servo_positions_smooth(
     knee_->write_microseconds(previous_knee_microseconds_);
 }
 
-void two_axis_leg::update_interpolation()
+bool two_axis_leg::update_interpolation()
 {
     if (!shoulder_interpolation_->is_finished() ||
         !knee_interpolation_->is_finished())
@@ -212,10 +217,15 @@ void two_axis_leg::update_interpolation()
         previous_knee_microseconds_ = knee_interpolation_->get_value();
         shoulder_->write_microseconds(previous_shoulder_microseconds_);
         knee_->write_microseconds(previous_knee_microseconds_);
+
+        return shoulder_interpolation_->is_finished() &&
+            knee_interpolation_->is_finished();
     }
+
+    return true;
 }
 
-void two_axis_leg::update_smooth()
+bool two_axis_leg::update_smooth()
 {
     if (!shoulder_smoother_->is_finished() ||
         !knee_smoother_->is_finished())
@@ -224,7 +234,12 @@ void two_axis_leg::update_smooth()
         previous_knee_microseconds_ = knee_smoother_->get_value();
         shoulder_->write_microseconds(previous_shoulder_microseconds_);
         knee_->write_microseconds(previous_knee_microseconds_);
+
+        return shoulder_smoother_->is_finished() &&
+            knee_smoother_->is_finished();
     }
+
+    return true;
 }
 
 }

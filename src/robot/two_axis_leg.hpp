@@ -40,7 +40,9 @@ public:
 
     void set_forward_back(int8_t forward_back, movement move_type) override;
 
-    void update_position() override;
+    bool update_position() override;
+
+    void set_leg_straight_down() override;
 
 private:
     const std::shared_ptr<
@@ -80,9 +82,9 @@ private:
     void set_new_servo_positions_smooth(
         short shoulder_microseconds, short knee_microseconds);
 
-    void update_interpolation();
+    bool update_interpolation();
 
-    void update_smooth();
+    bool update_smooth();
 };
 
 }

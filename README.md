@@ -65,6 +65,7 @@ C++14 :cry-face:)
 - [x] Make `set_position ` in `two_axis_leg` default to previous `forward_back`
 and previous `height` if new ones aren't provided? (Created `set_height` and
 `set_forward_back` that uses `set_position`)
+- [ ] Document how I use triangles for the inverse kinematics
 - [ ] If the movement type isn't the same as the movement type before do I need
 to clear down the smoother/interpolator?
 - [ ] Make gait to lift opposite legs

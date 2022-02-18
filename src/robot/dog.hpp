@@ -27,7 +27,7 @@ public:
 
     void set_forward_back(int8_t forward_back) override;
 
-    void update_position() override;
+    bool update_position() override;
 
 private:
     const std::unique_ptr<leg> front_left_;

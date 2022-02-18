@@ -21,7 +21,8 @@ public:
         int8_t height, int8_t forward_back, movement move_type) = 0;
     virtual void set_height(int8_t height, movement move_type) = 0;
     virtual void set_forward_back(int8_t forward_back, movement move_type) = 0;
-    virtual void update_position() = 0;
+    virtual bool update_position() = 0;
+    virtual void set_leg_straight_down() = 0;
 };
 
 }

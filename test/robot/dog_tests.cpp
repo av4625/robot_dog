@@ -13,6 +13,29 @@ namespace robot
 namespace
 {
 
+struct update_position_params
+{
+    update_position_params(
+        const bool front_left,
+        const bool rear_left,
+        const bool front_right,
+        const bool rear_right,
+        const bool dog_return) :
+            front_left(front_left),
+            rear_left(rear_left),
+            front_right(front_right),
+            rear_right(rear_right),
+            dog_return(dog_return)
+    {
+    }
+
+    const bool front_left;
+    const bool rear_left;
+    const bool front_right;
+    const bool rear_right;
+    const bool dog_return;
+};
+
 class DogTests : public ::testing::Test
 {
 protected:
@@ -43,6 +66,8 @@ protected:
     leg_mock* rear_right_ptr_;
     dog dog_;
 };
+
+}
 
 TEST_F(DogTests, BeginWillCallBeginForAllLegs)
 {
@@ -95,15 +120,35 @@ TEST_F(DogTests, SetForwardBackWillCallSetForwardBackForAllLegs)
     dog_.set_forward_back(1);
 }
 
-TEST_F(DogTests, UpdatePositionWillCallUpdatePositionForAllLegs)
+class DogTestsUpdatePosition :
+    public DogTests,
+    public ::testing::WithParamInterface<update_position_params>
 {
-    EXPECT_CALL(*front_left_ptr_, update_position());
-    EXPECT_CALL(*rear_left_ptr_, update_position());
-    EXPECT_CALL(*front_right_ptr_, update_position());
-    EXPECT_CALL(*rear_right_ptr_, update_position());
-    dog_.update_position();
+};
+
+TEST_P(DogTestsUpdatePosition, UpdatePositionWillCallUpdatePositionForAllLegs)
+{
+    EXPECT_CALL(*front_left_ptr_, update_position())
+        .WillOnce(::testing::Return(GetParam().front_left));
+    EXPECT_CALL(*rear_left_ptr_, update_position())
+        .WillOnce(::testing::Return(GetParam().front_right));
+    EXPECT_CALL(*front_right_ptr_, update_position())
+        .WillOnce(::testing::Return(GetParam().rear_left));
+    EXPECT_CALL(*rear_right_ptr_, update_position())
+        .WillOnce(::testing::Return(GetParam().rear_right));
+
+    EXPECT_EQ(GetParam().dog_return, dog_.update_position());
 }
 
-}
+INSTANTIATE_TEST_SUITE_P(
+    Values,
+    DogTestsUpdatePosition,
+    ::testing::Values(
+        update_position_params(true, true, true, true, true),
+        update_position_params(false, true, true, true, false),
+        update_position_params(true, false, true, true, false),
+        update_position_params(true, true, false, true, false),
+        update_position_params(true, true, true, false, false),
+        update_position_params(false, false, false, false, false)));
 
 }

@@ -19,7 +19,7 @@ public:
 
     MOCK_METHOD(void, set_forward_back, (int8_t forward_back), (override));
 
-    MOCK_METHOD(void, update_position, (), (override));
+    MOCK_METHOD(bool, update_position, (), (override));
 };
 
 }

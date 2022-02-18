@@ -27,7 +27,9 @@ public:
         (int8_t forward_back, movement move_type),
         (override));
 
-    MOCK_METHOD(void, update_position, (), (override));
+    MOCK_METHOD(bool, update_position, (), (override));
+
+    MOCK_METHOD(void, set_leg_straight_down, (), (override));
 };
 
 }

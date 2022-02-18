@@ -47,12 +47,14 @@ void dog::set_forward_back(const int8_t forward_back)
     rear_right_->set_forward_back(forward_back, movement::smooth);
 }
 
-void dog::update_position()
+bool dog::update_position()
 {
-    front_left_->update_position();
-    rear_left_->update_position();
-    front_right_->update_position();
-    rear_right_->update_position();
+    const bool front_left{front_left_->update_position()};
+    const bool rear_left{rear_left_->update_position()};
+    const bool front_right{front_right_->update_position()};
+    const bool rear_right{rear_right_->update_position()};
+
+    return front_left && rear_left && front_right && rear_right;
 }
 
 }
