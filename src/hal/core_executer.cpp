@@ -21,14 +21,20 @@ void core_executer::execute(std::function<void()> func) const
      */
     const std::function<void()>* func_ptr{new std::function<void()>(func)};
 
-    xTaskCreatePinnedToCore(
-        executable,          // Task function.
-        "Executer Task",     // Name of task.
-        5000,                // Stack size of task
-        &func_ptr,           // Parameter of the task
-        10,                  // Priority of the task
-        NULL,                // Task handle to keep track of created task
-        1);                  // Pin task to core 1
+    const auto task_return(
+        xTaskCreatePinnedToCore(
+            executable,          // Task function.
+            "Executer Task",     // Name of task.
+            5000,                // Stack size of task
+            &func_ptr,           // Parameter of the task
+            10,                  // Priority of the task
+            NULL,                // Task handle to keep track of created task
+            1));                 // Pin task to core 1
+
+    if (task_return != pdPASS)
+    {
+        delete func_ptr;
+    }
 }
 
 void core_executer::executable(void* data)
