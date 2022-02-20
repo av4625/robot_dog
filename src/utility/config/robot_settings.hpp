@@ -1,7 +1,7 @@
-#ifndef HAL_CONFIG_ROBOT_SETTINGS_HPP
-#define HAL_CONFIG_ROBOT_SETTINGS_HPP
+#ifndef UTILITY_CONFIG_ROBOT_SETTINGS_HPP
+#define UTILITY_CONFIG_ROBOT_SETTINGS_HPP
 
-namespace hal
+namespace utility
 {
 namespace config
 {
