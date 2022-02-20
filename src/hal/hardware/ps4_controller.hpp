@@ -6,6 +6,8 @@
 #include <memory>
 #include <utility>
 
+#include "../../utility/gamepad/events_fwd.hpp"
+
 #include "gamepad_factory_impl.hpp"
 
 namespace hal
@@ -19,9 +21,7 @@ public:
     ps4_controller(
         const std::string& mac_address,
         std::function<void()> connected_callback,
-        std::function<void(
-            std::pair<int8_t, bool>&&,
-            std::pair<int8_t, bool>&&)> event_callback);
+        std::function<void(utility::gamepad::events&&)> event_callback);
 
     void begin() const override;
 
@@ -48,9 +48,7 @@ private:
 
     const std::string mac_address_;
     const std::function<void()> connected_callback_;
-    const std::function<void(
-        std::pair<int8_t, bool>&&,
-        std::pair<int8_t, bool>&&)> event_callback_;
+    const std::function<void(utility::gamepad::events&&)> event_callback_;
 };
 
 }

@@ -1,5 +1,6 @@
 #include "ps4_controller.hpp"
 #include <PS4Controller.h>
+#include "../../utility/gamepad/events.hpp"
 
 // https://stackoverflow.com/questions/31018005/c-member-function-as-callback-function-to-external-library
 
@@ -13,12 +14,10 @@ std::weak_ptr<ps4_controller> ps4_controller::instance_{};
 ps4_controller::ps4_controller(
     const std::string& mac_address,
     std::function<void()> connected_callback,
-    std::function<void(
-        std::pair<int8_t, bool>&&,
-        std::pair<int8_t, bool>&&)> event_callback) :
-            mac_address_(mac_address),
-            connected_callback_(std::move(connected_callback)),
-            event_callback_(std::move(event_callback))
+    std::function<void(utility::gamepad::events&&)> event_callback) :
+        mac_address_(mac_address),
+        connected_callback_(std::move(connected_callback)),
+        event_callback_(std::move(event_callback))
 {
 }
 
@@ -61,28 +60,29 @@ void ps4_controller::event_callback()
 
     if (instance)
     {
-        std::pair<int8_t, bool> forward_back;
-        std::pair<int8_t, bool> height;
+        utility::gamepad::events events;
 
-        if(PS4.event.analog_move.stick.rx)
+        if(PS4.event.analog_move.stick.ry)
         {
-            forward_back = std::make_pair(PS4.data.analog.stick.rx, true);
+            events.r_stick_y = std::make_pair(PS4.data.analog.stick.ry, true);
         }
         else
         {
-            forward_back = std::make_pair(0, false);
+            events.r_stick_y = std::make_pair(0, false);
         }
 
         if(PS4.event.analog_move.stick.ly)
         {
-            height = std::make_pair(PS4.data.analog.stick.ly, true);
+            events.l_stick_y = std::make_pair(PS4.data.analog.stick.ly, true);
         }
         else
         {
-            height = std::make_pair(0, false);
+            events.l_stick_y = std::make_pair(0, false);
         }
 
-        instance->event_callback_(std::move(forward_back), std::move(height));
+        events.settings = PS4.event.button_down.options;
+
+        instance->event_callback_(std::move(events));
     }
 }
 

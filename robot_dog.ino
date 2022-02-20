@@ -8,10 +8,11 @@
 #include "src/hal/hardware/arduino_impl.hpp"
 #include "src/hal/hardware/gamepad_factory_impl.hpp"
 #include "src/hal/robot/leg_factory_impl.hpp"
+#include "src/utility/gamepad/atomic_events.hpp"
+#include "src/utility/gamepad/events.hpp"
 
 void ps4_controller_connected();
-void ps4_controller_event(
-    std::pair<int8_t, bool>&& forward_back, std::pair<int8_t, bool>&& height);
+void ps4_controller_event(utility::gamepad::events&& events);
 
 const std::shared_ptr<hal::hardware::arduino> arduino{
     std::make_shared<hal::hardware::arduino_impl>()};
@@ -33,8 +34,7 @@ const std::unique_ptr<robot::leg> leg{
         hal::hardware::D18,
         hal::hardware::D5)};
 
-std::atomic<int8_t> forward_back{0};
-std::atomic<int8_t> height{0};
+utility::gamepad::atomic_events gamepad_events;
 
 void setup()
 {
@@ -75,18 +75,19 @@ void ps4_controller_connected()
         1);                 // Pin task to core 1
 }
 
-void ps4_controller_event(
-    std::pair<int8_t, bool>&& forward_back, std::pair<int8_t, bool>&& height)
+void ps4_controller_event(utility::gamepad::events&& events)
 {
-    if (forward_back.second)
+    if (events.l_stick_y.second)
     {
-        ::forward_back = forward_back.first;
+        gamepad_events.l_stick_y = events.l_stick_y.first;
     }
 
-    if (height.second)
+    if (events.r_stick_y.second)
     {
-        ::height = height.first;
+        gamepad_events.r_stick_y = events.r_stick_y.first;
     }
+
+    gamepad_events.settings = events.settings;
 }
 
 void connected_lights(void* params)
@@ -109,7 +110,10 @@ void set_leg_position(void* params)
 {
     while(true)
     {
-        leg->set_position(height, forward_back, robot::movement::smooth);
+        leg->set_position(
+            gamepad_events.l_stick_y,
+            gamepad_events.r_stick_y,
+            robot::movement::smooth);
         leg->update_position();
 
         // Try with micro second delay

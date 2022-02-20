@@ -14,9 +14,8 @@ public:
     std::shared_ptr<gamepad> create_ps4_gamepad(
         const std::string& mac_address,
         std::function<void()> connected_callback,
-        std::function<void(
-            std::pair<int8_t, bool>&&,
-            std::pair<int8_t, bool>&&)> event_callback) const override;
+        std::function<
+            void(utility::gamepad::events&&)> event_callback) const override;
 };
 
 }

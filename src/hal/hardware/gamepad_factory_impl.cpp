@@ -9,9 +9,7 @@ namespace hardware
 std::shared_ptr<gamepad> gamepad_factory_impl::create_ps4_gamepad(
     const std::string& mac_address,
     std::function<void()> connected_callback,
-    std::function<void(
-        std::pair<int8_t, bool>&&,
-        std::pair<int8_t, bool>&&)> event_callback) const
+    std::function<void(utility::gamepad::events&&)> event_callback) const
 {
     std::shared_ptr<ps4_controller> ps4_controller_instance{
         ps4_controller::instance_.lock()};
