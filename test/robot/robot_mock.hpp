@@ -20,6 +20,20 @@ public:
     MOCK_METHOD(void, set_forward_back, (int8_t forward_back), (override));
 
     MOCK_METHOD(bool, update_position, (), (override));
+
+    MOCK_METHOD(void, fully_extend_legs, (), (override));
+
+    MOCK_METHOD(void, set_legs_in_neutral_position, (), (override));
+
+    MOCK_METHOD(
+        void,
+        trim_joint,
+        (
+            utility::robot::limb limb,
+            utility::robot::joint joint,
+            utility::robot::direction direction
+        ),
+        (override));
 };
 
 }

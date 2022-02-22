@@ -9,7 +9,17 @@ namespace robot
 
 namespace
 {
-const float right_angle_radians{M_PI / 2};
+
+const double zero_degrees_radians{0};
+const double forty_five_degrees_radians{M_PI / 4};
+const double ninety_degrees_radians{M_PI / 2};
+const double one_hundred_and_thirty_five_degrees_radians{
+    M_PI - forty_five_degrees_radians};
+const double one_hundred_and_eighty_degrees_radians{M_PI};
+
+const short min_servo_microseconds{500};
+const short max_servo_microseconds{2500};
+
 }
 
 two_axis_leg::two_axis_leg(
@@ -49,7 +59,17 @@ two_axis_leg::two_axis_leg(
         previous_knee_microseconds_(1500),
         previous_forward_back_(0),
         previous_height_(0),
-        current_move_type_(movement::interpolation)
+        current_move_type_(utility::robot::movement::interpolation),
+        shoulder_trim_offset_microseconds_(40),
+        knee_trim_offset_microseconds_(100),
+        min_servo_microseconds_shoulder_(
+            min_servo_microseconds + shoulder_trim_offset_microseconds_),
+        max_servo_microseconds_shoulder_(
+            max_servo_microseconds + shoulder_trim_offset_microseconds_),
+        min_servo_microseconds_knee_(
+            min_servo_microseconds + knee_trim_offset_microseconds_),
+        max_servo_microseconds_knee_(
+            max_servo_microseconds + knee_trim_offset_microseconds_)
 {
 }
 
@@ -60,7 +80,9 @@ void two_axis_leg::begin()
 }
 
 void two_axis_leg::set_position(
-    const int8_t height, const int8_t forward_back, const movement move_type)
+    const int8_t height,
+    const int8_t forward_back,
+    const utility::robot::movement move_type)
 {
     current_move_type_ = move_type;
 
@@ -73,11 +95,11 @@ void two_axis_leg::set_position(
 
         switch (move_type)
         {
-            case movement::smooth:
+            case utility::robot::movement::smooth:
                 set_new_servo_positions_smooth(
                     microseconds.first, microseconds.second);
                 break;
-            case movement::interpolation:
+            case utility::robot::movement::interpolation:
                 set_new_servo_positions_interpolation(
                     microseconds.first, microseconds.second);
                 break;
@@ -92,13 +114,14 @@ void two_axis_leg::set_position(
     }
 }
 
-void two_axis_leg::set_height(const int8_t height, const movement move_type)
+void two_axis_leg::set_height(
+    const int8_t height, const utility::robot::movement move_type)
 {
     set_position(height, previous_forward_back_, move_type);
 }
 
 void two_axis_leg::set_forward_back(
-    const int8_t forward_back, const movement move_type)
+    const int8_t forward_back, const utility::robot::movement move_type)
 {
     set_position(previous_height_, forward_back, move_type);
 }
@@ -107,9 +130,9 @@ bool two_axis_leg::update_position()
 {
     switch (current_move_type_)
     {
-        case movement::smooth:
+        case utility::robot::movement::smooth:
             return update_smooth();
-        case movement::interpolation:
+        case utility::robot::movement::interpolation:
             return update_interpolation();
         default:
             return update_smooth();
@@ -118,10 +141,47 @@ bool two_axis_leg::update_position()
 
 void two_axis_leg::set_leg_straight_down()
 {
-    // Is the knee 180 or 0!?
     const auto servo_values{
-        calculate_servo_microseconds(right_angle_radians, M_PI)};
+        calculate_servo_microseconds(
+            zero_degrees_radians, zero_degrees_radians)};
     set_new_servo_positions_smooth(servo_values.first, servo_values.second);
+}
+
+void two_axis_leg::set_leg_neutral_position()
+{
+    set_position(0, 0, utility::robot::movement::smooth);
+}
+
+void two_axis_leg::trim_joint(
+    const utility::robot::joint joint,
+    const utility::robot::direction direction)
+{
+    if (joint == utility::robot::joint::shoulder)
+    {
+        if (direction == utility::robot::direction::clockwise)
+        {
+            shoulder_trim_offset_microseconds_ += 10;
+            move_to_position(joint, previous_shoulder_microseconds_ += 10);
+        }
+        else
+        {
+            shoulder_trim_offset_microseconds_ -= 10;
+            move_to_position(joint, previous_shoulder_microseconds_ -= 10);
+        }
+    }
+    else
+    {
+        if (direction == utility::robot::direction::clockwise)
+        {
+            knee_trim_offset_microseconds_ += 10;
+            move_to_position(joint, previous_knee_microseconds_ += 10);
+        }
+        else
+        {
+            knee_trim_offset_microseconds_ -= 10;
+            move_to_position(joint, previous_knee_microseconds_ -= 10);
+        }
+    }
 }
 
 std::pair<float, float> two_axis_leg::generate_angles(
@@ -149,9 +209,24 @@ std::pair<short, short> two_axis_leg::calculate_servo_microseconds(
     const float shoulder_angle, const float knee_angle) const
 {
     return std::make_pair(
-        calc_->map(
-            shoulder_angle, -right_angle_radians, right_angle_radians, 40, 2040),
-        calc_->map(knee_angle, 0, M_PI, 2600, 600));
+        calc_->constrict(
+            static_cast<short>(calc_->map(
+                shoulder_angle,
+                -forty_five_degrees_radians,
+                one_hundred_and_thirty_five_degrees_radians,
+                min_servo_microseconds_shoulder_,
+                max_servo_microseconds_shoulder_)),
+            min_servo_microseconds,
+            max_servo_microseconds),
+        calc_->constrict(
+            static_cast<short>(calc_->map(
+                knee_angle,
+                zero_degrees_radians,
+                one_hundred_and_eighty_degrees_radians,
+                max_servo_microseconds_knee_,
+                min_servo_microseconds_knee_)),
+            min_servo_microseconds,
+            max_servo_microseconds));
 }
 
 void two_axis_leg::set_new_servo_positions_interpolation(
@@ -240,6 +315,21 @@ bool two_axis_leg::update_smooth()
     }
 
     return true;
+}
+
+void two_axis_leg::move_to_position(
+    const utility::robot::joint joint, const short microseconds)
+{
+    if (joint == utility::robot::joint::shoulder)
+    {
+        previous_shoulder_microseconds_ = microseconds;
+        shoulder_->write_microseconds(microseconds);
+    }
+    else
+    {
+        previous_knee_microseconds_ = microseconds;
+        knee_->write_microseconds(microseconds);
+    }
 }
 
 }

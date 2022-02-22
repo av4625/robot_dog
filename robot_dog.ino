@@ -37,7 +37,7 @@ const std::unique_ptr<hal::robot::leg_factory> leg_factory{
     new hal::robot::leg_factory_impl()};
 const std::unique_ptr<robot::leg> leg{
     leg_factory->create(
-        robot::leg_type::two_axis,
+        utility::robot::leg_type::two_axis,
         arduino,
         calculations,
         hal::hardware::D18,
@@ -124,7 +124,7 @@ void set_leg_position(void* params)
         leg->set_position(
             gamepad_events.l_stick_y,
             gamepad_events.r_stick_y,
-            robot::movement::smooth);
+            utility::robot::movement::smooth);
         leg->update_position();
 
         // Try with micro second delay

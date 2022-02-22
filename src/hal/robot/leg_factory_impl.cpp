@@ -13,7 +13,7 @@ namespace robot
 {
 
 std::unique_ptr<::robot::leg> leg_factory_impl::create(
-    const ::robot::leg_type type,
+    const utility::robot::leg_type type,
     const std::shared_ptr<hal::hardware::arduino> arduino,
     const std::shared_ptr<const mathmatics::calculations> calculations,
     const uint8_t shoulder_pin,
@@ -21,7 +21,7 @@ std::unique_ptr<::robot::leg> leg_factory_impl::create(
 {
     switch (type)
     {
-        case ::robot::leg_type::two_axis:
+        case utility::robot::leg_type::two_axis:
         default:
         {
             std::unique_ptr<hal::hardware::servo> shoulder_servo{

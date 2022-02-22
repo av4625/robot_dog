@@ -7,7 +7,9 @@
 #include "../mathmatics/calculations.hpp"
 #include "../mathmatics/trigonometry/isosceles_triangle.hpp"
 #include "../mathmatics/trigonometry/right_angled_triangle.hpp"
-#include "movement.hpp"
+#include "../utility/robot/direction.hpp"
+#include "../utility/robot/joint.hpp"
+#include "../utility/robot/movement.hpp"
 
 namespace robot
 {
@@ -16,13 +18,29 @@ class leg
 {
 public:
     virtual ~leg(){}
+
     virtual void begin() = 0;
+
     virtual void set_position(
-        int8_t height, int8_t forward_back, movement move_type) = 0;
-    virtual void set_height(int8_t height, movement move_type) = 0;
-    virtual void set_forward_back(int8_t forward_back, movement move_type) = 0;
+        int8_t height,
+        int8_t forward_back,
+        utility::robot::movement move_type) = 0;
+
+    virtual void set_height(
+        int8_t height, utility::robot::movement move_type) = 0;
+
+    virtual void set_forward_back(
+        int8_t forward_back, utility::robot::movement move_type) = 0;
+
     virtual bool update_position() = 0;
+
     virtual void set_leg_straight_down() = 0;
+
+    virtual void set_leg_neutral_position() = 0;
+
+    virtual void trim_joint(
+        utility::robot::joint joint,
+        utility::robot::direction direction) = 0;
 };
 
 }

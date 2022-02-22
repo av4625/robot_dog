@@ -34,15 +34,24 @@ public:
     void begin() override;
 
     void set_position(
-        int8_t height, int8_t forward_back, movement move_type) override;
+        int8_t height,
+        int8_t forward_back,
+        utility::robot::movement move_type) override;
 
-    void set_height(int8_t height, movement move_type) override;
+    void set_height(int8_t height, utility::robot::movement move_type) override;
 
-    void set_forward_back(int8_t forward_back, movement move_type) override;
+    void set_forward_back(
+        int8_t forward_back, utility::robot::movement move_type) override;
 
     bool update_position() override;
 
     void set_leg_straight_down() override;
+
+    void set_leg_neutral_position() override;
+
+    void trim_joint(
+        utility::robot::joint joint,
+        utility::robot::direction direction) override;
 
 private:
     const std::shared_ptr<
@@ -68,7 +77,13 @@ private:
     short previous_knee_microseconds_;
     int8_t previous_forward_back_;
     int8_t previous_height_;
-    movement current_move_type_;
+    utility::robot::movement current_move_type_;
+    short shoulder_trim_offset_microseconds_;
+    short knee_trim_offset_microseconds_;
+    short min_servo_microseconds_shoulder_;
+    short max_servo_microseconds_shoulder_;
+    short min_servo_microseconds_knee_;
+    short max_servo_microseconds_knee_;
 
     std::pair<float, float> generate_angles(
         int8_t height, int8_t forward_back) const;
@@ -85,6 +100,8 @@ private:
     bool update_interpolation();
 
     bool update_smooth();
+
+    void move_to_position(utility::robot::joint joint, short microseconds);
 };
 
 }

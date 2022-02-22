@@ -32,9 +32,9 @@ joints
 ### To-Do List
 - [x] Position a single foot in Z space (Isosceles Triangle)
 - [x] Position a single foot in X space (Right Angled Triangle)
-- [ ] Figure a clean way to add the "trim" or microsecond offset that is
+- [x] Figure a clean way to add the "trim" or microsecond offset that is
 required to move the joints to the zero position
-- [ ] Work out exact radians to servo microseconds mapping ranges
+- [x] Work out exact radians to servo microseconds mapping ranges
 - [x] Add smoothing to servos (should get this for free with interpolation and
 using an easing out curve like a sine curve)
 - [x] Add hal for RAMP library
@@ -51,7 +51,7 @@ previous value and how long it takes (and how many steps it takes) to get to the
 destination
 - [ ] Change max height depending on forward/back amount?
 - [x] Set starting position of robot so we dont have to rely on center joysticks
-- [ ] Make calculations mockable so the `two_axis_leg` tests are better
+- [x] Make calculations mockable so the `two_axis_leg` tests are better
 (templated `constrict` holding me back)
 - [x] Take the servo pins in the constructor of the leg impls so the interfaces
 don't need to know how many pins a specific impl will need in
@@ -68,6 +68,8 @@ and previous `height` if new ones aren't provided? (Created `set_height` and
 - [x] Document how I use triangles for the inverse kinematics
 - [x] Use an `executer` for the connected lights instead of manually creating a
 task to do it
+- [x] Fix helper functions in `two_axis_leg_tests` to move the common code to a
+new function
 - [ ] If the movement type isn't the same as the movement type before do I need
 to clear down the smoother/interpolator?
 - [ ] Make gait to lift opposite legs

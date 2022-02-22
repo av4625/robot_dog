@@ -81,13 +81,28 @@ TEST_F(DogTests, BeginWillCallBeginForAllLegs)
 TEST_F(DogTests, SetPositionWillCallSetPositionForAllLegs)
 {
     EXPECT_CALL(*front_left_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        2,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*rear_left_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        2,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*front_right_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        2,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*rear_right_ptr_, set_position(
-        1, 2, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        2,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
 
     dog_.set_position(1, 2);
 }
@@ -95,13 +110,24 @@ TEST_F(DogTests, SetPositionWillCallSetPositionForAllLegs)
 TEST_F(DogTests, SetHeightWillCallSetHeightForAllLegs)
 {
     EXPECT_CALL(*front_left_ptr_, set_height(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*rear_left_ptr_, set_height(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*front_right_ptr_, set_height(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*rear_right_ptr_, set_height(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
 
     dog_.set_height(1);
 }
@@ -109,13 +135,24 @@ TEST_F(DogTests, SetHeightWillCallSetHeightForAllLegs)
 TEST_F(DogTests, SetForwardBackWillCallSetForwardBackForAllLegs)
 {
     EXPECT_CALL(*front_left_ptr_, set_forward_back(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*rear_left_ptr_, set_forward_back(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*front_right_ptr_, set_forward_back(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
     EXPECT_CALL(*rear_right_ptr_, set_forward_back(
-        1, ::testing::Matcher<movement>(movement::smooth)));
+        1,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
 
     dog_.set_forward_back(1);
 }
@@ -150,5 +187,93 @@ INSTANTIATE_TEST_SUITE_P(
         update_position_params(true, true, false, true, false),
         update_position_params(true, true, true, false, false),
         update_position_params(false, false, false, false, false)));
+
+TEST_F(DogTests, FullyExtendLegsWillCallSetLegStraightDownForAllLegs)
+{
+    EXPECT_CALL(*front_left_ptr_, set_leg_straight_down());
+    EXPECT_CALL(*rear_left_ptr_, set_leg_straight_down());
+    EXPECT_CALL(*front_right_ptr_, set_leg_straight_down());
+    EXPECT_CALL(*rear_right_ptr_, set_leg_straight_down());
+
+    dog_.fully_extend_legs();
+}
+
+TEST_F(DogTests, SetLegsInNeutralPositionWillSetAlLegsInNeutralPosition)
+{
+    EXPECT_CALL(*front_left_ptr_, set_leg_neutral_position());
+    EXPECT_CALL(*rear_left_ptr_, set_leg_neutral_position());
+    EXPECT_CALL(*front_right_ptr_, set_leg_neutral_position());
+    EXPECT_CALL(*rear_right_ptr_, set_leg_neutral_position());
+
+    dog_.set_legs_in_neutral_position();
+}
+
+class DogTestsTrim :
+    public DogTests,
+    public ::testing::WithParamInterface<
+        std::pair<utility::robot::joint, utility::robot::direction> >
+{
+};
+
+TEST_P(DogTestsTrim, TrimJointWhenLimbIsFrontLeftWillTrimFrontLeft)
+{
+    EXPECT_CALL(*front_left_ptr_, trim_joint(
+        GetParam().first, GetParam().second));
+
+    dog_.trim_joint(
+        utility::robot::limb::front_left,
+        GetParam().first,
+        GetParam().second);
+}
+
+TEST_P(DogTestsTrim, TrimJointWhenLimbIsRearLeftWillTrimRearLeft)
+{
+    EXPECT_CALL(*rear_left_ptr_, trim_joint(
+        GetParam().first, GetParam().second));
+
+    dog_.trim_joint(
+        utility::robot::limb::rear_left,
+        GetParam().first,
+        GetParam().second);
+}
+
+TEST_P(DogTestsTrim, TrimJointWhenLimbIsFrontRightWillTrimFrontRight)
+{
+    EXPECT_CALL(*front_right_ptr_, trim_joint(
+        GetParam().first, GetParam().second));
+
+    dog_.trim_joint(
+        utility::robot::limb::front_right,
+        GetParam().first,
+        GetParam().second);
+}
+
+TEST_P(DogTestsTrim, TrimJointWhenLimbIsRearRightWillTrimRearRight)
+{
+    EXPECT_CALL(*rear_right_ptr_, trim_joint(
+        GetParam().first, GetParam().second));
+
+    dog_.trim_joint(
+        utility::robot::limb::rear_right,
+        GetParam().first,
+        GetParam().second);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    Values,
+    DogTestsTrim,
+    ::testing::Values(
+        std::make_pair(
+            utility::robot::joint::knee,
+            utility::robot::direction::clockwise),
+        std::make_pair(
+            utility::robot::joint::knee,
+            utility::robot::direction::anti_clockwise),
+        std::make_pair(
+            utility::robot::joint::shoulder,
+            utility::robot::direction::clockwise),
+        std::make_pair(
+            utility::robot::joint::shoulder,
+            utility::robot::direction::anti_clockwise)));
 
 }

@@ -29,6 +29,15 @@ public:
 
     bool update_position() override;
 
+    void fully_extend_legs() override;
+
+    void set_legs_in_neutral_position() override;
+
+    void trim_joint(
+        utility::robot::limb limb,
+        utility::robot::joint joint,
+        utility::robot::direction direction) override;
+
 private:
     const std::unique_ptr<leg> front_left_;
     const std::unique_ptr<leg> rear_left_;
