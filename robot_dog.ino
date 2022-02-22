@@ -5,6 +5,7 @@
 #include <ESP32PWM.h>
 #include <PS4Controller.h>
 
+#include "src/hal/core_executer.hpp"
 #include "src/hal/hardware/arduino_impl.hpp"
 #include "src/hal/hardware/gamepad_factory_impl.hpp"
 #include "src/hal/robot/leg_factory_impl.hpp"
@@ -24,6 +25,9 @@ const std::shared_ptr<hal::hardware::gamepad> gamepad{
         "01:01:01:01:01:01",
         &ps4_controller_connected,
         &ps4_controller_event)};
+
+const std::shared_ptr<hal::executer> executer{
+    std::make_shared<hal::core_executer>()};
 
 const std::unique_ptr<hal::robot::leg_factory> leg_factory{
     new hal::robot::leg_factory_impl()};
@@ -65,14 +69,16 @@ void loop()
 
 void ps4_controller_connected()
 {
-    xTaskCreatePinnedToCore(
-        connected_lights,   // Task function.
-        "Task2",            // Name of task.
-        10000,              // Stack size of task
-        NULL,               // Parameter of the task
-        1,                  // Priority of the task
-        NULL,               // Task handle to keep track of created task
-        1);                 // Pin task to core 1
+    executer->execute([]()
+    {
+        gamepad->set_rumble(0, 255);
+        gamepad->set_led(255, 0, 0);
+        gamepad->send();
+        arduino->delay(1000);
+        gamepad->set_rumble(0, 0);
+        gamepad->set_led(150, 0, 205);
+        gamepad->send();
+    });
 }
 
 void ps4_controller_event(utility::gamepad::events&& events)

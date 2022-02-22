@@ -19,17 +19,17 @@ void core_executer::execute(std::function<void()> func) const
      * one task could be halted while accessing the map and then another process
      * started and then it could access the map.
      */
-    const std::function<void()>* func_ptr{new std::function<void()>(func)};
+    std::function<void()>* func_ptr{new std::function<void()>(func)};
 
     const auto task_return(
         xTaskCreatePinnedToCore(
-            executable,          // Task function.
-            "Executer Task",     // Name of task.
-            5000,                // Stack size of task
-            &func_ptr,           // Parameter of the task
-            10,                  // Priority of the task
-            NULL,                // Task handle to keep track of created task
-            1));                 // Pin task to core 1
+            executable,                        // Task function.
+            "Executer Task",                   // Name of task.
+            10000,                             // Stack size of task
+            reinterpret_cast<void*>(func_ptr), // Parameter of the task
+            10,                                // Priority of the task
+            NULL,                              // Task handle to keep track of created task
+            1));                               // Pin task to core 1
 
     if (task_return != pdPASS)
     {
@@ -41,8 +41,10 @@ void core_executer::executable(void* data)
 {
     if (data != NULL)
     {
-        (*reinterpret_cast<std::function<void()>*>(data))();
-        delete data;
+        const std::function<void()>* func_ptr(
+            reinterpret_cast<std::function<void()>*>(data));
+        (*func_ptr)();
+        delete func_ptr;
     }
 
     vTaskDelete(NULL);

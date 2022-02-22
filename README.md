@@ -66,6 +66,8 @@ C++14 :cry-face:)
 and previous `height` if new ones aren't provided? (Created `set_height` and
 `set_forward_back` that uses `set_position`)
 - [x] Document how I use triangles for the inverse kinematics
+- [x] Use an `executer` for the connected lights instead of manually creating a
+task to do it
 - [ ] If the movement type isn't the same as the movement type before do I need
 to clear down the smoother/interpolator?
 - [ ] Make gait to lift opposite legs
