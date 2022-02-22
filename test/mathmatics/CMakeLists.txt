@@ -1,10 +1,12 @@
 add_subdirectory(trigonometry)
 
 add_library(mathmatics
-    ${SRC_DIR}/mathmatics/calculations.cpp
+    ${SRC_DIR}/mathmatics/calculations_impl.cpp
     ${SRC_DIR}/mathmatics/smoother_impl.cpp)
 
-add_executable(mathmatics_tests calculations_tests.cpp smoother_impl_tests.cpp)
+add_executable(mathmatics_tests
+    calculations_impl_tests.cpp
+    smoother_impl_tests.cpp)
 
 target_link_libraries(mathmatics_tests PRIVATE
     mathmatics unittests)

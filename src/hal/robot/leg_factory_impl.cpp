@@ -2,7 +2,6 @@
 
 #include "../hardware/servo_impl.hpp"
 #include "../interpolation_impl.hpp"
-#include "../../mathmatics/calculations.hpp"
 #include "../../mathmatics/smoother_impl.hpp"
 #include "../../mathmatics/trigonometry/isosceles_triangle_impl.hpp"
 #include "../../mathmatics/trigonometry/right_angled_triangle_impl.hpp"
@@ -16,6 +15,7 @@ namespace robot
 std::unique_ptr<::robot::leg> leg_factory_impl::create(
     const ::robot::leg_type type,
     const std::shared_ptr<hal::hardware::arduino> arduino,
+    const std::shared_ptr<const mathmatics::calculations> calculations,
     const uint8_t shoulder_pin,
     const uint8_t knee_pin) const
 {
@@ -49,7 +49,7 @@ std::unique_ptr<::robot::leg> leg_factory_impl::create(
                     std::move(knee_interpolation),
                     std::move(shoulder_smoother),
                     std::move(knee_smoother),
-                    std::make_shared<const mathmatics::calculations>(),
+                    calculations,
                     shoulder_pin,
                     knee_pin)};
         }

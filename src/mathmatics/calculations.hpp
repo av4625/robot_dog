@@ -14,13 +14,15 @@ public:
         float min_in_range,
         float max_in_range,
         int min_out_range,
-        int max_out_range) const;
+        int max_out_range) const = 0;
 
-    template<typename T>
-    T constrict(T value, T minimum, T maximum) const
-    {
-        return (value < minimum) ? minimum : ((value > maximum) ? maximum : value);
-    }
+    virtual short constrict(
+        short value, short minimum, short maximum) const = 0;
+
+    virtual int constrict(int value, int minimum, int maximum) const = 0;
+
+    virtual double constrict(
+        double value, double minimum, double maximum) const = 0;
 };
 
 }

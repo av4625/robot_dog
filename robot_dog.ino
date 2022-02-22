@@ -9,6 +9,7 @@
 #include "src/hal/hardware/arduino_impl.hpp"
 #include "src/hal/hardware/gamepad_factory_impl.hpp"
 #include "src/hal/robot/leg_factory_impl.hpp"
+#include "src/mathmatics/calculations_impl.hpp"
 #include "src/utility/gamepad/atomic_events.hpp"
 #include "src/utility/gamepad/events.hpp"
 
@@ -29,12 +30,16 @@ const std::shared_ptr<hal::hardware::gamepad> gamepad{
 const std::shared_ptr<hal::executer> executer{
     std::make_shared<hal::core_executer>()};
 
+const std::shared_ptr<const mathmatics::calculations> calculations{
+    std::make_shared<const mathmatics::calculations_impl>()};
+
 const std::unique_ptr<hal::robot::leg_factory> leg_factory{
     new hal::robot::leg_factory_impl()};
 const std::unique_ptr<robot::leg> leg{
     leg_factory->create(
         robot::leg_type::two_axis,
         arduino,
+        calculations,
         hal::hardware::D18,
         hal::hardware::D5)};
 

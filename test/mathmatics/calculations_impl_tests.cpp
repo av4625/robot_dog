@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <mathmatics/calculations.hpp>
+#include <mathmatics/calculations_impl.hpp>
 
 namespace mathmatics
 {
@@ -15,7 +15,7 @@ class CalculationsTestsBase : public ::testing::Test
 protected:
     CalculationsTestsBase() : calc_() {}
 
-    calculations calc_;
+    calculations_impl calc_;
 };
 
 class CalculationsTestsMap :
@@ -34,7 +34,7 @@ protected:
 
 typedef ::testing::Types<
     std::tuple<int, int, int, int>,
-    std::tuple<float, float, float, float> > TestTypes;
+    std::tuple<double, double, double, double> > TestTypes;
 
 template<> std::vector<std::tuple<int, int, int, int> > CalculationsTestsConstrict<std::tuple<int, int, int, int> >::values_{
     std::make_tuple(1, 1, 1, 10),
@@ -42,7 +42,7 @@ template<> std::vector<std::tuple<int, int, int, int> > CalculationsTestsConstri
     std::make_tuple(10, 10, 1, 10),
     std::make_tuple(10, 11, 1, 10),
     std::make_tuple(5, 5, 1, 10)};
-template<> std::vector<std::tuple<float, float, float, float> > CalculationsTestsConstrict<std::tuple<float, float, float, float> >::values_{
+template<> std::vector<std::tuple<double, double, double, double> > CalculationsTestsConstrict<std::tuple<double, double, double, double> >::values_{
     std::make_tuple(1.1, 1.1, 1.1, 10.1),
     std::make_tuple(1.1, 1.0, 1.1, 10.1),
     std::make_tuple(10.1, 10.1, 1.1, 10.1),
@@ -82,7 +82,7 @@ TYPED_TEST_SUITE_P(CalculationsTestsConstrict);
 
 TYPED_TEST_P(CalculationsTestsConstrict, ConstrictWillReturnCorrectValue)
 {
-    calculations calc;
+    calculations_impl calc;
 
     for (TypeParam value : CalculationsTestsConstrict<TypeParam>::values_)
     {
