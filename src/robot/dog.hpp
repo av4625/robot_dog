@@ -5,7 +5,10 @@
 
 #include <memory>
 
-#include "leg.hpp"
+#include "../hal/config/manager_fwd.hpp"
+#include "../utility/config/robot_settings.hpp"
+
+#include "leg_fwd.hpp"
 
 namespace robot
 {
@@ -17,7 +20,8 @@ public:
         std::unique_ptr<leg> front_left,
         std::unique_ptr<leg> rear_left,
         std::unique_ptr<leg> front_right,
-        std::unique_ptr<leg> rear_right);
+        std::unique_ptr<leg> rear_right,
+        std::unique_ptr<hal::config::manager> config);
 
     void begin() override;
 
@@ -38,11 +42,16 @@ public:
         utility::robot::joint joint,
         utility::robot::direction direction) override;
 
+    void save_trim_values() override;
+
 private:
     const std::unique_ptr<leg> front_left_;
     const std::unique_ptr<leg> rear_left_;
     const std::unique_ptr<leg> front_right_;
     const std::unique_ptr<leg> rear_right_;
+    const std::unique_ptr<hal::config::manager> config_;
+
+    utility::config::robot_settings dog_settings_;
 };
 
 }

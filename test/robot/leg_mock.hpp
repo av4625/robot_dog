@@ -10,7 +10,8 @@ namespace robot
 class leg_mock : public leg
 {
 public:
-    MOCK_METHOD(void, begin, (), (override));
+    MOCK_METHOD(
+        void, begin, (short shoulder_trim, short knee_trim), (override));
 
     MOCK_METHOD(
         void,
@@ -41,7 +42,7 @@ public:
     MOCK_METHOD(void, set_leg_neutral_position, (), (override));
 
     MOCK_METHOD(
-        void,
+        short,
         trim_joint,
         (
             utility::robot::joint joint,

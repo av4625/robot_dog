@@ -1,4 +1,6 @@
 #include "dog.hpp"
+#include "../hal/config/manager.hpp"
+#include "leg.hpp"
 
 namespace robot
 {
@@ -7,20 +9,30 @@ dog::dog(
     std::unique_ptr<leg> front_left,
     std::unique_ptr<leg> rear_left,
     std::unique_ptr<leg> front_right,
-    std::unique_ptr<leg> rear_right) :
+    std::unique_ptr<leg> rear_right,
+    std::unique_ptr<hal::config::manager> config) :
         front_left_(std::move(front_left)),
         rear_left_(std::move(rear_left)),
         front_right_(std::move(front_right)),
-        rear_right_(std::move(rear_right))
+        rear_right_(std::move(rear_right)),
+        config_(std::move(config)),
+        dog_settings_({})
 {
 }
 
 void dog::begin()
 {
-    front_left_->begin();
-    rear_left_->begin();
-    front_right_->begin();
-    rear_right_->begin();
+    config_->begin();
+    config_->get_settings(dog_settings_);
+
+    front_left_->begin(
+        dog_settings_.front_left_shoulder, dog_settings_.front_left_knee);
+    rear_left_->begin(
+        dog_settings_.rear_left_shoulder, dog_settings_.rear_left_knee);
+    front_right_->begin(
+        dog_settings_.front_right_shoulder, dog_settings_.front_right_knee);
+    rear_right_->begin(
+        dog_settings_.rear_right_shoulder, dog_settings_.rear_right_knee);
 }
 
 void dog::set_position(const int8_t height, const int8_t forward_back)
@@ -85,18 +97,71 @@ void dog::trim_joint(
     switch (limb)
     {
         case utility::robot::limb::front_left:
-            front_left_->trim_joint(joint, direction);
+        {
+            const short trim{front_left_->trim_joint(joint, direction)};
+
+            if (joint == utility::robot::joint::shoulder)
+            {
+                dog_settings_.front_left_shoulder = trim;
+            }
+            else if (joint == utility::robot::joint::knee)
+            {
+                dog_settings_.front_left_knee = trim;
+            }
+
             break;
+        }
         case utility::robot::limb::rear_left:
-            rear_left_->trim_joint(joint, direction);
+        {
+            const short trim{rear_left_->trim_joint(joint, direction)};
+
+            if (joint == utility::robot::joint::shoulder)
+            {
+                dog_settings_.rear_left_shoulder = trim;
+            }
+            else if (joint == utility::robot::joint::knee)
+            {
+                dog_settings_.rear_left_knee = trim;
+            }
+
             break;
+        }
         case utility::robot::limb::front_right:
-            front_right_->trim_joint(joint, direction);
+        {
+            const short trim{front_right_->trim_joint(joint, direction)};
+
+            if (joint == utility::robot::joint::shoulder)
+            {
+                dog_settings_.front_right_shoulder = trim;
+            }
+            else if (joint == utility::robot::joint::knee)
+            {
+                dog_settings_.front_right_knee = trim;
+            }
+
             break;
+        }
         case utility::robot::limb::rear_right:
-            rear_right_->trim_joint(joint, direction);
+        {
+            const short trim{rear_right_->trim_joint(joint, direction)};
+
+            if (joint == utility::robot::joint::shoulder)
+            {
+                dog_settings_.rear_right_shoulder = trim;
+            }
+            else if (joint == utility::robot::joint::knee)
+            {
+                dog_settings_.rear_right_knee = trim;
+            }
+
             break;
+        }
     }
+}
+
+void dog::save_trim_values()
+{
+    config_->save_settings(dog_settings_);
 }
 
 }

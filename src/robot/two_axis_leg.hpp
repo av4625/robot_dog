@@ -31,7 +31,7 @@ public:
         uint8_t shoulder_pin,
         uint8_t knee_pin);
 
-    void begin() override;
+    void begin(short shoulder_trim, short knee_trim) override;
 
     void set_position(
         int8_t height,
@@ -49,7 +49,7 @@ public:
 
     void set_leg_neutral_position() override;
 
-    void trim_joint(
+    short trim_joint(
         utility::robot::joint joint,
         utility::robot::direction direction) override;
 

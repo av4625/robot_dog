@@ -25,6 +25,7 @@ public:
         utility::robot::limb limb,
         utility::robot::joint joint,
         utility::robot::direction direction) = 0;
+    virtual void save_trim_values() = 0;
 };
 
 }

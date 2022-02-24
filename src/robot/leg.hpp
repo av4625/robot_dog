@@ -19,7 +19,7 @@ class leg
 public:
     virtual ~leg(){}
 
-    virtual void begin() = 0;
+    virtual void begin(short shoulder_trim, short knee_trim) = 0;
 
     virtual void set_position(
         int8_t height,
@@ -38,7 +38,7 @@ public:
 
     virtual void set_leg_neutral_position() = 0;
 
-    virtual void trim_joint(
+    virtual short trim_joint(
         utility::robot::joint joint,
         utility::robot::direction direction) = 0;
 };

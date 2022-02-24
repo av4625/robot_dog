@@ -1,6 +1,7 @@
 #include "arduino_impl.hpp"
 
 #include "Arduino.h"
+#include <ESP32PWM.h>
 
 namespace hal
 {
@@ -9,6 +10,10 @@ namespace hardware
 
 void arduino_impl::begin(const unsigned long serial_baud_rate) const
 {
+    ESP32PWM::allocateTimer(0);
+    ESP32PWM::allocateTimer(1);
+    ESP32PWM::allocateTimer(2);
+    ESP32PWM::allocateTimer(3);
     Serial.begin(serial_baud_rate);
 }
 

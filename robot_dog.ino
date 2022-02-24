@@ -2,7 +2,6 @@
 #include <memory>
 #include <utility>
 
-#include <ESP32PWM.h>
 #include <PS4Controller.h>
 
 #include "src/hal/core_executer.hpp"
@@ -49,13 +48,7 @@ void setup()
 {
     arduino->begin(115200);
     gamepad->begin();
-
-    ESP32PWM::allocateTimer(0);
-    ESP32PWM::allocateTimer(1);
-    ESP32PWM::allocateTimer(2);
-    ESP32PWM::allocateTimer(3);
-
-    leg->begin();
+    leg->begin(40, 100);
 
     xTaskCreatePinnedToCore(
         set_leg_position,   // Task function.

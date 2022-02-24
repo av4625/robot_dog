@@ -60,23 +60,31 @@ two_axis_leg::two_axis_leg(
         previous_forward_back_(0),
         previous_height_(0),
         current_move_type_(utility::robot::movement::interpolation),
-        shoulder_trim_offset_microseconds_(40),
-        knee_trim_offset_microseconds_(100),
-        min_servo_microseconds_shoulder_(
-            min_servo_microseconds + shoulder_trim_offset_microseconds_),
-        max_servo_microseconds_shoulder_(
-            max_servo_microseconds + shoulder_trim_offset_microseconds_),
-        min_servo_microseconds_knee_(
-            min_servo_microseconds + knee_trim_offset_microseconds_),
-        max_servo_microseconds_knee_(
-            max_servo_microseconds + knee_trim_offset_microseconds_)
+        shoulder_trim_offset_microseconds_(0),
+        knee_trim_offset_microseconds_(0),
+        min_servo_microseconds_shoulder_(min_servo_microseconds),
+        max_servo_microseconds_shoulder_(max_servo_microseconds),
+        min_servo_microseconds_knee_(min_servo_microseconds),
+        max_servo_microseconds_knee_(max_servo_microseconds)
 {
 }
 
-void two_axis_leg::begin()
+void two_axis_leg::begin(const short shoulder_trim, const short knee_trim)
 {
     shoulder_->begin(shoulder_pin_);
     knee_->begin(knee_pin_);
+
+    shoulder_trim_offset_microseconds_ = shoulder_trim;
+    knee_trim_offset_microseconds_ = knee_trim;
+
+    min_servo_microseconds_shoulder_ =
+        min_servo_microseconds + shoulder_trim_offset_microseconds_;
+    max_servo_microseconds_shoulder_ =
+        max_servo_microseconds + shoulder_trim_offset_microseconds_;
+    min_servo_microseconds_knee_ =
+        min_servo_microseconds + knee_trim_offset_microseconds_;
+    max_servo_microseconds_knee_ =
+        max_servo_microseconds + knee_trim_offset_microseconds_;
 }
 
 void two_axis_leg::set_position(
@@ -96,17 +104,23 @@ void two_axis_leg::set_position(
         switch (move_type)
         {
             case utility::robot::movement::smooth:
+            {
                 set_new_servo_positions_smooth(
                     microseconds.first, microseconds.second);
                 break;
+            }
             case utility::robot::movement::interpolation:
+            {
                 set_new_servo_positions_interpolation(
                     microseconds.first, microseconds.second);
                 break;
+            }
             default:
+            {
                 set_new_servo_positions_smooth(
                     microseconds.first, microseconds.second);
                 break;
+            }
         }
 
         previous_height_ = height;
@@ -131,11 +145,17 @@ bool two_axis_leg::update_position()
     switch (current_move_type_)
     {
         case utility::robot::movement::smooth:
+        {
             return update_smooth();
+        }
         case utility::robot::movement::interpolation:
+        {
             return update_interpolation();
+        }
         default:
+        {
             return update_smooth();
+        }
     }
 }
 
@@ -152,7 +172,7 @@ void two_axis_leg::set_leg_neutral_position()
     set_position(0, 0, utility::robot::movement::smooth);
 }
 
-void two_axis_leg::trim_joint(
+short two_axis_leg::trim_joint(
     const utility::robot::joint joint,
     const utility::robot::direction direction)
 {
@@ -168,6 +188,13 @@ void two_axis_leg::trim_joint(
             shoulder_trim_offset_microseconds_ -= 10;
             move_to_position(joint, previous_shoulder_microseconds_ -= 10);
         }
+
+        min_servo_microseconds_shoulder_ =
+            min_servo_microseconds + shoulder_trim_offset_microseconds_;
+        max_servo_microseconds_shoulder_ =
+            max_servo_microseconds + shoulder_trim_offset_microseconds_;
+
+        return shoulder_trim_offset_microseconds_;
     }
     else
     {
@@ -181,6 +208,13 @@ void two_axis_leg::trim_joint(
             knee_trim_offset_microseconds_ -= 10;
             move_to_position(joint, previous_knee_microseconds_ -= 10);
         }
+
+        min_servo_microseconds_knee_ =
+            min_servo_microseconds + knee_trim_offset_microseconds_;
+        max_servo_microseconds_knee_ =
+            max_servo_microseconds + knee_trim_offset_microseconds_;
+
+        return knee_trim_offset_microseconds_;
     }
 }
 

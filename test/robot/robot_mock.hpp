@@ -34,6 +34,8 @@ public:
             utility::robot::direction direction
         ),
         (override));
+
+    MOCK_METHOD(void, save_trim_values, (), (override));
 };
 
 }
