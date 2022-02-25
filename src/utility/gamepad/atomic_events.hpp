@@ -18,6 +18,12 @@ struct atomic_events
 {
     std::atomic<int8_t> l_stick_y;
     std::atomic<int8_t> r_stick_y;
+    std::atomic<bool> left;
+    std::atomic<bool> right;
+    std::atomic<bool> l1;
+    std::atomic<bool> r1;
+    std::atomic<bool> cross;
+    std::atomic<bool> circle;
     std::atomic<bool> settings;
 };
 
