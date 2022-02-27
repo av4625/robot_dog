@@ -38,8 +38,6 @@ short smoother_impl::get_value()
         previous_value_time_ = current_time;
         previous_smoothed_value_ = (destination_ * 0.1) +
             (previous_smoothed_value_ * 0.90);
-
-        return previous_smoothed_value_;
     }
 
     return previous_smoothed_value_;

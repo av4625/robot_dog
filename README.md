@@ -70,8 +70,11 @@ and previous `height` if new ones aren't provided? (Created `set_height` and
 task to do it
 - [x] Fix helper functions in `two_axis_leg_tests` to move the common code to a
 new function
-- [ ] If the movement type isn't the same as the movement type before do I need
-to clear down the smoother/interpolator?
+- [ ] Change knee joint range so that straight isn't max movement. As 180
+degrees the other way is an impossible location
+- [x] If the movement type isn't the same as the movement type before do I need
+to clear down the smoother/interpolator? (No, starting the next movement type
+sets it to the new starting location and forgets what was there before)
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
 - [ ] Statemachine for different modes controlled by the PS4 remote
@@ -86,6 +89,28 @@ callback sets atomic variables that then are read by core `1`. This is abit
 "nasty" but if I call the leg/robot/controller functions in the callback they
 will be executed on core one, possibly slowing down reading from the gamepad.
 
+## Controls
+
+### Modes
+
+#### Common to All Modes
+- PS Button: Connects the controller to the dog
+
+#### Leaning Mode
+- Left Stick Up and Down: Change the height of the dog
+- Right Stick Up and Down: Lean the dog forward and back
+- Options Button: Change to trimming mode
+
+#### TrimMing Mode
+- Left Arrow: Trim active limbs knee joint to the left (looking from the side)
+- Right Arrow: Trim active limbs knee joint to the right (looking from the side)
+- L1 Arrow: Trim active limbs shoulder joint to the left (looking from the side)
+- R1 Arrow: Trim active limbs shoulder joint to the right (looking from the
+side)
+- Cross: Move to next limb
+- Circle: Change to leaning mode without saving trim values
+- Options Button: Change to leaning mode and save trim values
+
 ## Dependencies
 * Conan: Package manager for C++. Used to get GoogleTest for the unit tests
 * 8 MG90S servos (12 if the stretch goal of positioning in Y space is met)
@@ -94,6 +119,7 @@ pins should work, pins may/may not need changed
 for other models)
 * Power supply for the servos (I use a 2 cell, 7.4v lipo regulated to 6v)
 * 3D Printer
+* PS4 Controller with a MAC address that you know or have reset
 
 ## Thoughts
 * Have a global shared pointer to a manager that is a state machine. Different
