@@ -75,6 +75,7 @@ degrees the other way is an impossible location
 - [x] If the movement type isn't the same as the movement type before do I need
 to clear down the smoother/interpolator? (No, starting the next movement type
 sets it to the new starting location and forgets what was there before)
+- [ ] Better name for `has_position_changed_` and tests for it
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
 - [ ] Statemachine for different modes controlled by the PS4 remote

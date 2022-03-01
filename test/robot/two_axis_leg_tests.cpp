@@ -691,7 +691,11 @@ TEST_F(TwoAxisLegTests, SetForwardBackWillUsePreviousHeight)
 
 TEST_F(TwoAxisLegTests, SetLegStraightDownWillFullyExtendLeg)
 {
-    set_calculations_servo_expectations(2000, 2001, 0, 0);
+    set_calculations_servo_expectations(
+        2000,
+        2001,
+        zero_degrees_radians,
+        one_hundred_and_eighty_degrees_radians);
 
     set_smoother_start_expectations(
         starting_microseconds, 2000, starting_microseconds, 2001);

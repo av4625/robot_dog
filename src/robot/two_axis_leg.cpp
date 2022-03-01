@@ -65,7 +65,8 @@ two_axis_leg::two_axis_leg(
         min_servo_microseconds_shoulder_(min_servo_microseconds),
         max_servo_microseconds_shoulder_(max_servo_microseconds),
         min_servo_microseconds_knee_(min_servo_microseconds),
-        max_servo_microseconds_knee_(max_servo_microseconds)
+        max_servo_microseconds_knee_(max_servo_microseconds),
+        has_position_changed_(true)
 {
 }
 
@@ -94,7 +95,9 @@ void two_axis_leg::set_position(
 {
     current_move_type_ = move_type;
 
-    if (height != previous_height_ || forward_back != previous_forward_back_)
+    if (height != previous_height_ ||
+        forward_back != previous_forward_back_ ||
+        has_position_changed_)
     {
         const auto angles{generate_angles(height, forward_back)};
 
@@ -125,6 +128,7 @@ void two_axis_leg::set_position(
 
         previous_height_ = height;
         previous_forward_back_ = forward_back;
+        has_position_changed_ = false;
     }
 }
 
@@ -161,9 +165,11 @@ bool two_axis_leg::update_position()
 
 void two_axis_leg::set_leg_straight_down()
 {
+    has_position_changed_ = true;
+
     const auto servo_values{
         calculate_servo_microseconds(
-            zero_degrees_radians, zero_degrees_radians)};
+            zero_degrees_radians, one_hundred_and_eighty_degrees_radians)};
     set_new_servo_positions_smooth(servo_values.first, servo_values.second);
 }
 
@@ -176,6 +182,8 @@ short two_axis_leg::trim_joint(
     const utility::robot::joint joint,
     const utility::robot::direction direction)
 {
+    has_position_changed_ = true;
+
     if (joint == utility::robot::joint::shoulder)
     {
         if (direction == utility::robot::direction::clockwise)

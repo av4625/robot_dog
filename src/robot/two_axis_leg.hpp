@@ -84,6 +84,7 @@ private:
     short max_servo_microseconds_shoulder_;
     short min_servo_microseconds_knee_;
     short max_servo_microseconds_knee_;
+    bool has_position_changed_;
 
     std::pair<float, float> generate_angles(
         int8_t height, int8_t forward_back) const;
