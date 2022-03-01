@@ -19,6 +19,8 @@ public:
     MOCK_METHOD(uint16_t, analog_read, (uint8_t pin), (const, override));
     MOCK_METHOD(unsigned long, millis, (), (const, override));
     MOCK_METHOD(void, delay, (uint32_t milliseconds), (const, override));
+    MOCK_METHOD(
+        void, delay_microseconds, (uint32_t milliseconds), (const, override));
     MOCK_METHOD(void, print, (const char* message), (const, override));
     MOCK_METHOD(void, print, (int message), (const, override));
     MOCK_METHOD(void, print, (uint32_t message), (const, override));

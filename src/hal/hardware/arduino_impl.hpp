@@ -17,6 +17,7 @@ public:
     uint16_t analog_read(uint8_t pin) const override;
     unsigned long millis() const override;
     void delay(uint32_t milliseconds) const override;
+    void delay_microseconds(uint32_t milliseconds) const override;
     void print(const char* message) const override;
     void print(int message) const override;
     void print(uint32_t message) const override;

@@ -42,6 +42,11 @@ void arduino_impl::delay(const uint32_t milliseconds) const
     ::delay(milliseconds);
 }
 
+void arduino_impl::delay_microseconds(const uint32_t milliseconds) const
+{
+    delayMicroseconds(milliseconds);
+}
+
 void arduino_impl::print(const char* message) const
 {
     Serial.print(message);

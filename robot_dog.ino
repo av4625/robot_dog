@@ -126,7 +126,24 @@ void set_leg_position(void* params)
             utility::robot::movement::smooth);
         leg->update_position();
 
-        // Try with micro second delay
-        delay(1);
+        // leg->set_leg_straight_down();
+
+        // while(!leg->update_position())
+        // {
+        // }
+
+        // arduino->println("After while");
+
+        // delay(5000);
+
+        // leg->set_leg_neutral_position();
+
+        // while(!leg->update_position())
+        // {
+        // }
+
+        // delay(5000);
+
+        arduino->delay_microseconds(1);
     }
 }

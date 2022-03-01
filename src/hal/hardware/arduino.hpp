@@ -18,6 +18,7 @@ public:
     virtual uint16_t analog_read(uint8_t pin) const = 0;
     virtual unsigned long millis() const = 0;
     virtual void delay(uint32_t milliseconds) const = 0;
+    virtual void delay_microseconds(uint32_t milliseconds) const = 0;
     virtual void print(const char* message) const = 0;
     virtual void print(int message) const = 0;
     virtual void print(uint32_t message) const = 0;
