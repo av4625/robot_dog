@@ -19,6 +19,7 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 include_directories(${SRC_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+add_subdirectory(controller)
 add_subdirectory(hal)
 add_subdirectory(mathmatics)
 add_subdirectory(robot)

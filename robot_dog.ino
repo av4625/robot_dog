@@ -1,14 +1,14 @@
-#include <atomic>
 #include <memory>
 #include <utility>
 
-#include <PS4Controller.h>
-
+#include "src/controller/controller.hpp"
 #include "src/hal/core_executer.hpp"
+#include "src/hal/config/manager_impl.hpp"
 #include "src/hal/hardware/arduino_impl.hpp"
 #include "src/hal/hardware/gamepad_factory_impl.hpp"
 #include "src/hal/robot/leg_factory_impl.hpp"
 #include "src/mathmatics/calculations_impl.hpp"
+#include "src/robot/dog.hpp"
 #include "src/utility/gamepad/atomic_events.hpp"
 #include "src/utility/gamepad/events.hpp"
 
@@ -22,7 +22,7 @@ const std::shared_ptr<hal::hardware::gamepad_factory> gamepad_factory{
     std::make_shared<hal::hardware::gamepad_factory_impl>()};
 const std::shared_ptr<hal::hardware::gamepad> gamepad{
     gamepad_factory->create_ps4_gamepad(
-        "01:01:01:01:01:01",
+        "11:11:11:11:11:11",
         &ps4_controller_connected,
         &ps4_controller_event)};
 
@@ -34,24 +34,64 @@ const std::shared_ptr<const mathmatics::calculations> calculations{
 
 const std::unique_ptr<hal::robot::leg_factory> leg_factory{
     new hal::robot::leg_factory_impl()};
-const std::unique_ptr<robot::leg> leg{
-    leg_factory->create(
-        utility::robot::leg_type::two_axis,
-        arduino,
-        calculations,
-        hal::hardware::D18,
-        hal::hardware::D5)};
 
-utility::gamepad::atomic_events gamepad_events;
+std::unique_ptr<hal::config::manager> config_manager{
+    new hal::config::manager_impl()};
+
+const std::shared_ptr<robot::robot> dog{
+    std::make_shared<robot::dog>(
+        leg_factory->create(
+            utility::robot::leg_type::two_axis,
+            arduino,
+            calculations,
+            hal::hardware::D18,
+            hal::hardware::D5),
+        leg_factory->create(
+            utility::robot::leg_type::two_axis,
+            arduino,
+            calculations,
+            hal::hardware::D17,
+            hal::hardware::D16),
+        leg_factory->create(
+            utility::robot::leg_type::two_axis,
+            arduino,
+            calculations,
+            hal::hardware::D18,
+            hal::hardware::D5),
+        leg_factory->create(
+            utility::robot::leg_type::two_axis,
+            arduino,
+            calculations,
+            hal::hardware::D18,
+            hal::hardware::D5),
+        std::move(config_manager))};
+
+const std::shared_ptr<controller::controller> robot_controller{
+    controller::controller::create(
+        dog,
+        gamepad,
+        executer,
+        arduino)};
+
+// const std::unique_ptr<robot::leg> leg{
+//     leg_factory->create(
+//         utility::robot::leg_type::two_axis,
+//         arduino,
+//         calculations,
+//         hal::hardware::D18,
+//         hal::hardware::D5)};
+
+utility::gamepad::atomic_events gamepad_events{
+    {0}, {0}, {false}, {false}, {false}, {false}, {false}, {false}, {false}};
 
 void setup()
 {
     arduino->begin(115200);
     gamepad->begin();
-    leg->begin(40, 100);
+    dog->begin();
 
     xTaskCreatePinnedToCore(
-        set_leg_position,   // Task function.
+        control_robot,      // Task function.
         "Task1",            // Name of task.
         10000,              // Stack size of task
         NULL,               // Parameter of the task
@@ -100,50 +140,125 @@ void ps4_controller_event(utility::gamepad::events&& events)
     gamepad_events.settings = events.settings;
 }
 
-void connected_lights(void* params)
+void control_robot(void* params)
 {
-    if (gamepad)
+    while (true)
     {
-        gamepad->set_rumble(0, 255);
-        gamepad->set_led(255, 0, 0);
-        gamepad->send();
-        arduino->delay(1000);
-        gamepad->set_rumble(0, 0);
-        gamepad->set_led(150, 0, 205);
-        gamepad->send();
-    }
+        robot_controller->on_l_stick_y_move(gamepad_events.l_stick_y);
+        robot_controller->on_r_stick_y_move(gamepad_events.r_stick_y);
 
-    vTaskDelete(NULL);
+        // Could miss button presses using this approach
+
+        if (gamepad_events.left)
+        {
+            arduino->println("Left");
+            robot_controller->on_left_button();
+        }
+
+        if (gamepad_events.right)
+        {
+            arduino->println("Right");
+            robot_controller->on_right_button();
+        }
+
+        if (gamepad_events.l1)
+        {
+            arduino->println("L1");
+            robot_controller->on_l1_button();
+        }
+
+        if (gamepad_events.r1)
+        {
+            arduino->println("R1");
+            robot_controller->on_r1_button();
+        }
+
+        if (gamepad_events.cross)
+        {
+            arduino->println("Cross");
+            robot_controller->on_cross_button();
+        }
+
+        if (gamepad_events.circle)
+        {
+            arduino->println("Circle");
+            robot_controller->on_circle_button();
+        }
+
+        if (gamepad_events.settings)
+        {
+            arduino->println("Settings");
+            robot_controller->on_settings_button();
+        }
+
+        robot_controller->update();
+    }
 }
 
-void set_leg_position(void* params)
-{
-    while(true)
-    {
-        leg->set_position(
-            gamepad_events.l_stick_y,
-            gamepad_events.r_stick_y,
-            utility::robot::movement::smooth);
-        leg->update_position();
+// void set_leg_position(void* params)
+// {
+//     leg->set_leg_straight_down();
 
-        // leg->set_leg_straight_down();
+//     while(!leg->update_position())
+//     {
+//     }
 
-        // while(!leg->update_position())
-        // {
-        // }
+//     arduino->println("After while");
 
-        // arduino->println("After while");
+//     delay(2000);
 
-        // delay(5000);
+//     for (int i = 0; i < 20; ++i)
+//     {
+//         leg->trim_joint(
+//             utility::robot::joint::knee,
+//             utility::robot::direction::clockwise);
+//         arduino->delay(250);
+//     }
 
-        // leg->set_leg_neutral_position();
+//     for (int i = 0; i < 20; ++i)
+//     {
+//         leg->trim_joint(
+//             utility::robot::joint::knee,
+//             utility::robot::direction::anti_clockwise);
+//         arduino->delay(250);
+//     }
 
-        // while(!leg->update_position())
-        // {
-        // }
+//     delay(2000);
 
-        // delay(5000);
+//     leg->set_leg_neutral_position();
 
-        arduino->delay_microseconds(1);
-    }
-}
+//     while(!leg->update_position())
+//     {
+//     }
+
+//     while(true)
+//     {
+//         leg->set_position(
+//             gamepad_events.l_stick_y,
+//             gamepad_events.r_stick_y,
+//             utility::robot::movement::smooth);
+//         leg->update_position();
+
+//         // arduino->println("Before straight down");
+
+//         // leg->set_leg_straight_down();
+
+//         // while(!leg->update_position())
+//         // {
+//         // }
+
+//         // arduino->println("After while");
+
+//         // delay(5000);
+
+//         // leg->set_leg_neutral_position();
+
+//         // while(!leg->update_position())
+//         // {
+//         // }
+
+//         // delay(5000);
+
+//         arduino->delay_microseconds(1);
+//     }
+// }
