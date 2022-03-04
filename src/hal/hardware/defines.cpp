@@ -13,6 +13,8 @@ const uint8_t input{0x01};
 const uint8_t output{0x02};
 const uint8_t input_pullup{0x05};
 
+const uint8_t D16{16};
+const uint8_t D17{17};
 const uint8_t D13{13};
 const uint8_t D12{12};
 const uint8_t D14{14};

@@ -18,7 +18,8 @@ extern const uint8_t output;
 extern const uint8_t input_pullup;
 
 // ESP32 Pins
-extern const uint8_t D13;
+extern const uint8_t D16;
+extern const uint8_t D17;
 extern const uint8_t D13;
 extern const uint8_t D12;
 extern const uint8_t D14;
