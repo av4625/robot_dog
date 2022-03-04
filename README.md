@@ -75,6 +75,10 @@ degrees the other way is an impossible location
 - [x] If the movement type isn't the same as the movement type before do I need
 to clear down the smoother/interpolator? (No, starting the next movement type
 sets it to the new starting location and forgets what was there before)
+- [ ] Do some research to see if I can use EEPROM along with the PS4 library
+- [ ] Try and find out why the PS4 controller doesn't return correct button
+presses when using the events version. Do I have to change to to looping and
+checking? :(
 - [ ] Better name for `has_position_changed_` and tests for it
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
