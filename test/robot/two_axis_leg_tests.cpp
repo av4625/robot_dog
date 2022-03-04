@@ -32,11 +32,15 @@ const int8_t int8_min{-128};
 const int8_t int8_max{127};
 const short starting_microseconds{1500};
 const double zero_degrees_radians{0};
+const double thirty_degrees_radians{M_PI / 6};
 const double forty_five_degrees_radians{M_PI / 4};
 const double ninety_degrees_radians{M_PI / 2};
 const double one_hundred_and_thirty_five_degrees_radians{
     M_PI - forty_five_degrees_radians};
+const double one_hundred_and_fifty_degrees_radians{thirty_degrees_radians * 5};
 const double one_hundred_and_eighty_degrees_radians{M_PI};
+const double two_hundred_and_ten_degrees_radians{
+    one_hundred_and_eighty_degrees_radians + thirty_degrees_radians};
 const short starting_shoulder_trim{0};
 const short starting_knee_trim{0};
 const short min_servo_microseconds{500};
@@ -155,8 +159,8 @@ protected:
 
         EXPECT_CALL(*calc_mock_, map(
             knee_angle,
-            zero_degrees_radians,
-            one_hundred_and_eighty_degrees_radians,
+            thirty_degrees_radians,
+            two_hundred_and_ten_degrees_radians,
             max_servo_microseconds_knee,
             min_servo_microseconds_knee
         )).WillOnce(::testing::Return(knee_microseconds_ret));
@@ -695,7 +699,7 @@ TEST_F(TwoAxisLegTests, SetLegStraightDownWillFullyExtendLeg)
         2000,
         2001,
         zero_degrees_radians,
-        one_hundred_and_eighty_degrees_radians);
+        one_hundred_and_fifty_degrees_radians);
 
     set_smoother_start_expectations(
         starting_microseconds, 2000, starting_microseconds, 2001);
@@ -755,12 +759,12 @@ TEST_P(TwoAxisLegTestsTrim, TrimJointWillReturnCorrectTrimValue)
         if (GetParam().direction == utility::robot::direction::clockwise)
         {
             EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(
-                starting_microseconds + 10));
+                starting_microseconds - 10));
         }
         else
         {
             EXPECT_CALL(*shoulder_servo_mock_ptr_, write_microseconds(
-                starting_microseconds - 10));
+                starting_microseconds + 10));
         }
     }
     else
@@ -790,23 +794,23 @@ INSTANTIATE_TEST_SUITE_P(
             0,
             utility::robot::joint::shoulder,
             utility::robot::direction::clockwise,
-            10),
-        trim_params(
-            0,
-            0,
-            utility::robot::joint::knee,
-            utility::robot::direction::clockwise,
-            10),
-        trim_params(
-            0,
-            0,
-            utility::robot::joint::shoulder,
-            utility::robot::direction::anti_clockwise,
             -10),
         trim_params(
             0,
             0,
             utility::robot::joint::knee,
+            utility::robot::direction::clockwise,
+            10),
+        trim_params(
+            0,
+            0,
+            utility::robot::joint::shoulder,
+            utility::robot::direction::anti_clockwise,
+            10),
+        trim_params(
+            0,
+            0,
+            utility::robot::joint::knee,
             utility::robot::direction::anti_clockwise,
             -10),
         trim_params(
@@ -814,19 +818,19 @@ INSTANTIATE_TEST_SUITE_P(
             0,
             utility::robot::joint::shoulder,
             utility::robot::direction::clockwise,
-            110),
-        trim_params(
-            0,
-            100,
-            utility::robot::joint::knee,
-            utility::robot::direction::clockwise,
-            110),
-        trim_params(
-            100,
-            0,
-            utility::robot::joint::shoulder,
-            utility::robot::direction::anti_clockwise,
             90),
+        trim_params(
+            0,
+            100,
+            utility::robot::joint::knee,
+            utility::robot::direction::clockwise,
+            110),
+        trim_params(
+            100,
+            0,
+            utility::robot::joint::shoulder,
+            utility::robot::direction::anti_clockwise,
+            110),
         trim_params(
             0,
             100,
@@ -842,17 +846,19 @@ TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
     two_axis_leg_->begin(50, 100);
 
     // Trim values after adding begin values and trim call adjustments together
-    const short shoulder_trim{60};
+    const short shoulder_trim{40};
     const short knee_trim{90};
 
     // Expect servos to be set after trim call
     set_write_microseconds_expectations(
-        starting_microseconds + 10, starting_microseconds - 10);
+        starting_microseconds - 10, starting_microseconds - 10);
 
     EXPECT_EQ(shoulder_trim, two_axis_leg_->trim_joint(
-        utility::robot::joint::shoulder, utility::robot::direction::clockwise));
+        utility::robot::joint::shoulder,
+        utility::robot::direction::clockwise));
     EXPECT_EQ(knee_trim, two_axis_leg_->trim_joint(
-        utility::robot::joint::knee, utility::robot::direction::anti_clockwise));
+        utility::robot::joint::knee,
+        utility::robot::direction::anti_clockwise));
 
     // Set max height
     set_triangle_expectations(
@@ -893,8 +899,8 @@ TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
 
     EXPECT_CALL(*calc_mock_, map(
         60,
-        zero_degrees_radians,
-        one_hundred_and_eighty_degrees_radians,
+        thirty_degrees_radians,
+        two_hundred_and_ten_degrees_radians,
         max_servo_microseconds_knee + knee_trim,
         min_servo_microseconds_knee + knee_trim
     )).WillOnce(::testing::Return(2000));
@@ -913,7 +919,7 @@ TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
 
     // Previous value is after the trim calls
     set_smoother_start_expectations(
-        starting_microseconds + 10, 1000, starting_microseconds - 10, 2000);
+        starting_microseconds - 10, 1000, starting_microseconds - 10, 2000);
 
     set_smoother_get_value_expectations();
 
