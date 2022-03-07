@@ -8,6 +8,7 @@
 #include "../../mathmatics/calculations_fwd.hpp"
 #include "../../robot/leg.hpp"
 #include "../../utility/robot/leg_type.hpp"
+#include "../../utility/robot/side.hpp"
 
 namespace hal
 {
@@ -20,6 +21,7 @@ public:
     virtual ~leg_factory(){}
     virtual std::unique_ptr<::robot::leg> create(
         utility::robot::leg_type type,
+        utility::robot::side side,
         const std::shared_ptr<hal::hardware::arduino> arduino,
         const std::shared_ptr<const mathmatics::calculations> calculations,
         uint8_t shoulder_pin,

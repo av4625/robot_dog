@@ -42,24 +42,28 @@ const std::shared_ptr<robot::robot> dog{
     std::make_shared<robot::dog>(
         leg_factory->create(
             utility::robot::leg_type::two_axis,
+            utility::robot::side::left,
             arduino,
             calculations,
             hal::hardware::D18,
             hal::hardware::D5),
         leg_factory->create(
             utility::robot::leg_type::two_axis,
+            utility::robot::side::left,
             arduino,
             calculations,
             hal::hardware::D17,
             hal::hardware::D16),
         leg_factory->create(
             utility::robot::leg_type::two_axis,
+            utility::robot::side::right,
             arduino,
             calculations,
             hal::hardware::D18,
             hal::hardware::D5),
         leg_factory->create(
             utility::robot::leg_type::two_axis,
+            utility::robot::side::right,
             arduino,
             calculations,
             hal::hardware::D18,

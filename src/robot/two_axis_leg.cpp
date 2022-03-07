@@ -38,8 +38,7 @@ two_axis_leg::two_axis_leg(
     std::unique_ptr<mathmatics::smoother> shoulder_smoother,
     std::unique_ptr<mathmatics::smoother> knee_smoother,
     const std::shared_ptr<const mathmatics::calculations>& calc,
-    const uint8_t shoulder_pin,
-    const uint8_t knee_pin) :
+    const utility::robot::side side) :
         forward_back_triangle_(forward_back_triangle),
         height_triangle_(height_triangle),
         shoulder_(std::move(shoulder)),
@@ -49,8 +48,6 @@ two_axis_leg::two_axis_leg(
         shoulder_smoother_(std::move(shoulder_smoother)),
         knee_smoother_(std::move(knee_smoother)),
         calc_(calc),
-        shoulder_pin_(shoulder_pin),
-        knee_pin_(knee_pin),
         minimum_time_for_max_rotation_(
             (shoulder_->get_minimum_time_for_180() > knee_->get_minimum_time_for_180()) ?
                 shoulder_->get_minimum_time_for_180() :
@@ -59,6 +56,7 @@ two_axis_leg::two_axis_leg(
         min_height_(40),
         max_forward_(-30),
         max_back_(30),
+        side_(side),
         previous_shoulder_microseconds_(1500),
         previous_knee_microseconds_(1500),
         previous_forward_back_(0),
@@ -76,8 +74,8 @@ two_axis_leg::two_axis_leg(
 
 void two_axis_leg::begin(const short shoulder_trim, const short knee_trim)
 {
-    shoulder_->begin(shoulder_pin_);
-    knee_->begin(knee_pin_);
+    shoulder_->begin();
+    knee_->begin();
 
     shoulder_trim_offset_microseconds_ = shoulder_trim;
     knee_trim_offset_microseconds_ = knee_trim;

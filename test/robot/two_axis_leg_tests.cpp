@@ -22,8 +22,6 @@ namespace robot
 namespace
 {
 
-const uint8_t shoulder_pin{1};
-const uint8_t knee_pin{1};
 const uint8_t min_height{40};
 const uint8_t max_height{95};
 const int8_t max_forward{-30};
@@ -120,8 +118,7 @@ protected:
             std::move(shoulder_smoother_mock_),
             std::move(knee_smoother_mock_),
             calc_mock_,
-            shoulder_pin,
-            knee_pin));
+            utility::robot::side::left));
     }
 
     const std::shared_ptr<
@@ -352,8 +349,8 @@ protected:
 
 TEST_F(TwoAxisLegTests, BeginWillCallBeginForBothServos)
 {
-    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin(shoulder_pin));
-    EXPECT_CALL(*knee_servo_mock_ptr_, begin(knee_pin));
+    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin());
+    EXPECT_CALL(*knee_servo_mock_ptr_, begin());
     two_axis_leg_->begin(starting_shoulder_trim, starting_knee_trim);
 }
 
@@ -750,8 +747,8 @@ class TwoAxisLegTestsTrim :
 
 TEST_P(TwoAxisLegTestsTrim, TrimJointWillReturnCorrectTrimValue)
 {
-    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin(shoulder_pin));
-    EXPECT_CALL(*knee_servo_mock_ptr_, begin(knee_pin));
+    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin());
+    EXPECT_CALL(*knee_servo_mock_ptr_, begin());
     two_axis_leg_->begin(GetParam().begin_shoulder, GetParam().begin_knee);
 
     if (GetParam().joint == utility::robot::joint::shoulder)
@@ -841,8 +838,8 @@ INSTANTIATE_TEST_SUITE_P(
 TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
 {
     // Begin with 50 and 100 trim values. Not setting position with these yet
-    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin(shoulder_pin));
-    EXPECT_CALL(*knee_servo_mock_ptr_, begin(knee_pin));
+    EXPECT_CALL(*shoulder_servo_mock_ptr_, begin());
+    EXPECT_CALL(*knee_servo_mock_ptr_, begin());
     two_axis_leg_->begin(50, 100);
 
     // Trim values after adding begin values and trim call adjustments together

@@ -9,6 +9,7 @@
 #include "../mathmatics/smoother.hpp"
 #include "../mathmatics/trigonometry/isosceles_triangle.hpp"
 #include "../mathmatics/trigonometry/right_angled_triangle.hpp"
+#include "../utility/robot/side.hpp"
 
 namespace robot
 {
@@ -28,8 +29,7 @@ public:
         std::unique_ptr<mathmatics::smoother> shoulder_smoother,
         std::unique_ptr<mathmatics::smoother> knee_smoother,
         const std::shared_ptr<const mathmatics::calculations>& calc,
-        uint8_t shoulder_pin,
-        uint8_t knee_pin);
+        utility::robot::side side);
 
     void begin(short shoulder_trim, short knee_trim) override;
 
@@ -65,13 +65,12 @@ private:
     const std::unique_ptr<mathmatics::smoother> shoulder_smoother_;
     const std::unique_ptr<mathmatics::smoother> knee_smoother_;
     const std::shared_ptr<const mathmatics::calculations> calc_;
-    const uint8_t shoulder_pin_;
-    const uint8_t knee_pin_;
     const short minimum_time_for_max_rotation_;
     const uint8_t max_height_;
     const uint8_t min_height_;
     const int8_t max_forward_;
     const int8_t max_back_;
+    utility::robot::side side_;
 
     short previous_shoulder_microseconds_;
     short previous_knee_microseconds_;

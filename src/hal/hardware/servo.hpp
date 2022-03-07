@@ -14,7 +14,7 @@ class servo
 public:
     virtual ~servo(){}
 
-    virtual void begin(uint8_t pin) = 0;
+    virtual void begin() = 0;
 
     virtual void write_microseconds(short microseconds) = 0;
 
