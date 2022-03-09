@@ -2,6 +2,7 @@
 #include <utility>
 
 #include "src/controller/controller.hpp"
+#include "src/hal/event_loop_impl.hpp"
 #include "src/hal/core_executer.hpp"
 #include "src/hal/config/manager_impl.hpp"
 #include "src/hal/hardware/arduino_impl.hpp"
