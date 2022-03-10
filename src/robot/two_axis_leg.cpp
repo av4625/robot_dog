@@ -16,7 +16,6 @@ const double forty_five_degrees_radians{M_PI / 4};
 const double ninety_degrees_radians{M_PI / 2};
 const double one_hundred_and_thirty_five_degrees_radians{
     M_PI - forty_five_degrees_radians};
-const double one_hundred_and_fifty_degrees_radians{thirty_degrees_radians * 5};
 const double one_hundred_and_eighty_degrees_radians{M_PI};
 const double two_hundred_and_ten_degrees_radians{
     one_hundred_and_eighty_degrees_radians + thirty_degrees_radians};
@@ -171,15 +170,9 @@ void two_axis_leg::set_leg_straight_down()
 
     current_move_type_ = utility::robot::movement::smooth;
 
-    // White robot leg settings
-    // const auto servo_values{
-    //     calculate_servo_microseconds(
-    //         zero_degrees_radians, one_hundred_and_eighty_degrees_radians)};
-    // set_new_servo_positions_smooth(servo_values.first, servo_values.second);
-
     const auto servo_values{
         calculate_servo_microseconds(
-            zero_degrees_radians, one_hundred_and_fifty_degrees_radians)};
+            zero_degrees_radians, one_hundred_and_eighty_degrees_radians)};
     set_new_servo_positions_smooth(servo_values.first, servo_values.second);
 }
 
@@ -218,13 +211,13 @@ short two_axis_leg::trim_joint(
     {
         if (direction == utility::robot::direction::clockwise)
         {
-            knee_trim_offset_microseconds_ += 10;
-            move_to_position(joint, previous_knee_microseconds_ += 10);
+            knee_trim_offset_microseconds_ -= 10;
+            move_to_position(joint, previous_knee_microseconds_ -= 10);
         }
         else
         {
-            knee_trim_offset_microseconds_ -= 10;
-            move_to_position(joint, previous_knee_microseconds_ -= 10);
+            knee_trim_offset_microseconds_ += 10;
+            move_to_position(joint, previous_knee_microseconds_ += 10);
         }
 
         min_servo_microseconds_knee_ =

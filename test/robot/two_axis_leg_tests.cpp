@@ -35,7 +35,6 @@ const double forty_five_degrees_radians{M_PI / 4};
 const double ninety_degrees_radians{M_PI / 2};
 const double one_hundred_and_thirty_five_degrees_radians{
     M_PI - forty_five_degrees_radians};
-const double one_hundred_and_fifty_degrees_radians{thirty_degrees_radians * 5};
 const double one_hundred_and_eighty_degrees_radians{M_PI};
 const double two_hundred_and_ten_degrees_radians{
     one_hundred_and_eighty_degrees_radians + thirty_degrees_radians};
@@ -696,7 +695,7 @@ TEST_F(TwoAxisLegTests, SetLegStraightDownWillFullyExtendLeg)
         2000,
         2001,
         zero_degrees_radians,
-        one_hundred_and_fifty_degrees_radians);
+        one_hundred_and_eighty_degrees_radians);
 
     set_smoother_start_expectations(
         starting_microseconds, 2000, starting_microseconds, 2001);
@@ -769,12 +768,12 @@ TEST_P(TwoAxisLegTestsTrim, TrimJointWillReturnCorrectTrimValue)
         if (GetParam().direction == utility::robot::direction::clockwise)
         {
             EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(
-                starting_microseconds + 10));
+                starting_microseconds - 10));
         }
         else
         {
             EXPECT_CALL(*knee_servo_mock_ptr_, write_microseconds(
-                starting_microseconds - 10));
+                starting_microseconds + 10));
         }
     }
 
@@ -797,7 +796,7 @@ INSTANTIATE_TEST_SUITE_P(
             0,
             utility::robot::joint::knee,
             utility::robot::direction::clockwise,
-            10),
+            -10),
         trim_params(
             0,
             0,
@@ -809,7 +808,7 @@ INSTANTIATE_TEST_SUITE_P(
             0,
             utility::robot::joint::knee,
             utility::robot::direction::anti_clockwise,
-            -10),
+            10),
         trim_params(
             100,
             0,
@@ -821,7 +820,7 @@ INSTANTIATE_TEST_SUITE_P(
             100,
             utility::robot::joint::knee,
             utility::robot::direction::clockwise,
-            110),
+            90),
         trim_params(
             100,
             0,
@@ -833,7 +832,7 @@ INSTANTIATE_TEST_SUITE_P(
             100,
             utility::robot::joint::knee,
             utility::robot::direction::anti_clockwise,
-            90)));
+            110)));
 
 TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
 {
@@ -844,11 +843,11 @@ TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
 
     // Trim values after adding begin values and trim call adjustments together
     const short shoulder_trim{40};
-    const short knee_trim{90};
+    const short knee_trim{110};
 
     // Expect servos to be set after trim call
     set_write_microseconds_expectations(
-        starting_microseconds - 10, starting_microseconds - 10);
+        starting_microseconds - 10, starting_microseconds + 10);
 
     EXPECT_EQ(shoulder_trim, two_axis_leg_->trim_joint(
         utility::robot::joint::shoulder,
@@ -916,7 +915,7 @@ TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
 
     // Previous value is after the trim calls
     set_smoother_start_expectations(
-        starting_microseconds - 10, 1000, starting_microseconds - 10, 2000);
+        starting_microseconds - 10, 1000, starting_microseconds + 10, 2000);
 
     set_smoother_get_value_expectations();
 
