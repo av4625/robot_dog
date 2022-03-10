@@ -9,7 +9,7 @@ namespace hardware
 std::shared_ptr<gamepad> gamepad_factory_impl::create_ps4_gamepad(
     const std::string& mac_address,
     std::function<void()> connected_callback,
-    std::function<void(utility::gamepad::events&&)> event_callback) const
+    const std::shared_ptr<event_loop>& event_loop) const
 {
     std::shared_ptr<ps4_controller> ps4_controller_instance{
         ps4_controller::instance_.lock()};
@@ -19,7 +19,7 @@ std::shared_ptr<gamepad> gamepad_factory_impl::create_ps4_gamepad(
         ps4_controller_instance = std::make_shared<ps4_controller>(
             mac_address,
             std::move(connected_callback),
-            std::move(event_callback));
+            event_loop);
         ps4_controller::instance_ = ps4_controller_instance;
     }
 

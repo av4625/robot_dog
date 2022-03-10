@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "../event_loop_fwd.hpp"
 #include "../../utility/gamepad/events_fwd.hpp"
 
 #include "gamepad.hpp"
@@ -20,8 +21,7 @@ public:
     virtual std::shared_ptr<gamepad> create_ps4_gamepad(
         const std::string& mac_address,
         std::function<void()> connected_callback,
-        std::function<
-            void(utility::gamepad::events&&)> event_callback) const = 0;
+        const std::shared_ptr<event_loop>& event_loop) const = 0;
 };
 
 }

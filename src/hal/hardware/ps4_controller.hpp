@@ -4,9 +4,12 @@
 #include "gamepad.hpp"
 
 #include <memory>
+#include <unordered_map>
 #include <utility>
 
-#include "../../utility/gamepad/events_fwd.hpp"
+#include "../../event/event.hpp"
+#include "../../event/event_id.hpp"
+#include "../event_loop.hpp"
 
 #include "gamepad_factory_impl.hpp"
 
@@ -21,7 +24,7 @@ public:
     ps4_controller(
         const std::string& mac_address,
         std::function<void()> connected_callback,
-        std::function<void(utility::gamepad::events&&)> event_callback);
+        const std::shared_ptr<event_loop>& event_loop);
 
     void begin() const override;
 
@@ -48,7 +51,11 @@ private:
 
     const std::string mac_address_;
     const std::function<void()> connected_callback_;
-    const std::function<void(utility::gamepad::events&&)> event_callback_;
+    const std::shared_ptr<event_loop> event_loop_;
+
+    /* Would rather use the enum was the first arg, but there is a bug in the
+       STL that was fixed in C++14 with a newer compiler */
+    const std::unordered_map<int, std::shared_ptr<const event::event> > events_;
 };
 
 }
