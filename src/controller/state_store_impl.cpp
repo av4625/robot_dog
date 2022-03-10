@@ -28,6 +28,10 @@ state* state_store_impl::get_state(const state_id id) const
         {
             return trim_.get();
         }
+        default:
+        {
+            return lean_.get();
+        }
     }
 }
 

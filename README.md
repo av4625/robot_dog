@@ -56,7 +56,7 @@ destination
 - [x] Take the servo pins in the constructor of the leg impls so the interfaces
 don't need to know how many pins a specific impl will need in
 the begin function?
-- [ ] Should dog `set_position` invert the forward back position so that when
+- [x] Should dog `set_position` invert the forward back position so that when
 you set the dog position forward the body goes forward and the leg goes back?
 - [x] Write code to position all legs independently
 - [x] Make the event callback in `ps4_controller` return optional values, if its
@@ -70,12 +70,12 @@ and previous `height` if new ones aren't provided? (Created `set_height` and
 task to do it
 - [x] Fix helper functions in `two_axis_leg_tests` to move the common code to a
 new function
-- [ ] Change knee joint range so that straight isn't max movement. As 180
+- [x] Change knee joint range so that straight isn't max movement. As 180
 degrees the other way is an impossible location
 - [x] If the movement type isn't the same as the movement type before do I need
 to clear down the smoother/interpolator? (No, starting the next movement type
 sets it to the new starting location and forgets what was there before)
-- [ ] Do some research to see if I can use EEPROM along with the PS4 library
+- [x] Do some research to see if I can use EEPROM along with the PS4 library
 - [x] Try and find out why the PS4 controller doesn't return correct button
 presses when using the events version. Do I have to change to to looping and
 checking? :( (There is a bug in the library, I have created a pull request with
@@ -84,17 +84,25 @@ the fix)
 - [ ] Better name for `has_position_changed_` and tests for it
 - [ ] Make gait to lift opposite legs
 - [ ] Make gait to walk
-- [ ] Statemachine for different modes controlled by the PS4 remote
+- [x] Statemachine for different modes controlled by the PS4 remote
 - [ ] Remove travis integration?
 
 ### Stretch Goals
 - [ ] Position a single foot in Y space (Right Angled Triangle). Requires a hip
 design for the dog and more servos
-- [ ] Add an event loop so that it is easier to control what happens on what
+- [x] Add an event loop so that it is easier to control what happens on what
 cores. Currently the gamepad calls a callback with the updated values, the
 callback sets atomic variables that then are read by core `1`. This is abit
 "nasty" but if I call the leg/robot/controller functions in the callback they
 will be executed on core one, possibly slowing down reading from the gamepad.
+    * This has been implemented
+      [here](https://github.com/av4625/robot_dog/tree/dirty_event_loop) with a
+      basic wrapper around the esp32 event loop
+    * Ideally I would like to make a *really* nice C++ wrapper for this that
+      would take events that carry the data and be able to just pass
+      `std::function`s for the event_handlers. This is proving tricky and
+      *nastier* than the version above. Initial implementation is
+      [here](https://github.com/av4625/robot_dog/tree/clean_event_loop_wrapper)
 
 ## Controls
 

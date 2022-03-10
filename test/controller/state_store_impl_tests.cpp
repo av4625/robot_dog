@@ -29,6 +29,13 @@ TEST_F(StateStoreTests, GetInitialStateWillReturnStateLean)
     EXPECT_EQ("lean", state_store_.get_initial_state()->get_name());
 }
 
+TEST_F(StateStoreTests, GetStateWithInvalidEnumReturnsStateLean)
+{
+    EXPECT_EQ(
+        "lean",
+        state_store_.get_state(static_cast<state_id>(999))->get_name());
+}
+
 TEST_P(StateStoreStates, GetStateWillReturnCorrectState)
 {
     EXPECT_EQ(
