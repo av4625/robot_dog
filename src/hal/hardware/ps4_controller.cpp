@@ -80,10 +80,10 @@ void ps4_controller::event_callback()
             events.l_stick_y = std::make_pair(0, false);
         }
 
-        events.settings = PS4.event.button_down.left;
-        events.settings = PS4.event.button_down.right;
-        events.settings = PS4.event.button_down.l1;
-        events.settings = PS4.event.button_down.r1;
+        events.left = PS4.event.button_down.left;
+        events.right = PS4.event.button_down.right;
+        events.l1 = PS4.event.button_down.l1;
+        events.r1 = PS4.event.button_down.r1;
         events.cross = PS4.event.button_down.cross;
         events.circle = PS4.event.button_down.circle;
         events.settings = PS4.event.button_down.options;

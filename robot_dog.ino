@@ -59,15 +59,15 @@ const std::shared_ptr<robot::robot> dog{
             utility::robot::side::right,
             arduino,
             calculations,
-            hal::hardware::D18,
-            hal::hardware::D5),
+            hal::hardware::D12,
+            hal::hardware::D12),
         leg_factory->create(
             utility::robot::leg_type::two_axis,
             utility::robot::side::right,
             arduino,
             calculations,
-            hal::hardware::D18,
-            hal::hardware::D5),
+            hal::hardware::D12,
+            hal::hardware::D12),
         std::move(config_manager))};
 
 const std::shared_ptr<controller::controller> robot_controller{
@@ -155,42 +155,49 @@ void control_robot(void* params)
 
         if (gamepad_events.left)
         {
+            gamepad_events.left = false;
             arduino->println("Left");
             robot_controller->on_left_button();
         }
 
         if (gamepad_events.right)
         {
+            gamepad_events.right = false;
             arduino->println("Right");
             robot_controller->on_right_button();
         }
 
         if (gamepad_events.l1)
         {
+            gamepad_events.l1 = false;
             arduino->println("L1");
             robot_controller->on_l1_button();
         }
 
         if (gamepad_events.r1)
         {
+            gamepad_events.r1 = false;
             arduino->println("R1");
             robot_controller->on_r1_button();
         }
 
         if (gamepad_events.cross)
         {
+            gamepad_events.cross = false;
             arduino->println("Cross");
             robot_controller->on_cross_button();
         }
 
         if (gamepad_events.circle)
         {
+            gamepad_events.circle = false;
             arduino->println("Circle");
             robot_controller->on_circle_button();
         }
 
         if (gamepad_events.settings)
         {
+            gamepad_events.settings = false;
             arduino->println("Settings");
             robot_controller->on_settings_button();
         }
