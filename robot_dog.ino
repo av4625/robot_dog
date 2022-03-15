@@ -59,15 +59,15 @@ const std::shared_ptr<robot::robot> dog{
             utility::robot::side::right,
             arduino,
             calculations,
-            hal::hardware::D12,
-            hal::hardware::D12),
+            hal::hardware::D26,
+            hal::hardware::D27),
         leg_factory->create(
             utility::robot::leg_type::two_axis,
             utility::robot::side::right,
             arduino,
             calculations,
-            hal::hardware::D12,
-            hal::hardware::D12),
+            hal::hardware::D33,
+            hal::hardware::D25),
         std::move(config_manager))};
 
 const std::shared_ptr<controller::controller> robot_controller{
