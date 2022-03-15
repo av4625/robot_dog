@@ -161,6 +161,7 @@ TEST_F(StateTrimTests, OnCrossButtonWillChangeToNextLimb)
 {
     EXPECT_CALL(*context_mock_, get_robot())
         .Times(4).WillRepeatedly(::testing::Return(robot_mock_));
+    EXPECT_CALL(*context_mock_, small_rumble_controller(250)).Times(4);
 
     state_trim_.on_cross_button(context_mock_);
 
