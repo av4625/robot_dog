@@ -135,6 +135,16 @@ void ps4_controller_event(utility::gamepad::events&& events)
         gamepad_events.r_stick_y = events.r_stick_y.first;
     }
 
+    if (events.l2.second)
+    {
+        gamepad_events.l2 = events.l2.first;
+    }
+
+    if (events.r2.second)
+    {
+        gamepad_events.r2 = events.r2.first;
+    }
+
     gamepad_events.left = events.left;
     gamepad_events.right = events.right;
     gamepad_events.l1 = events.l1;

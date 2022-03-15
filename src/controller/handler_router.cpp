@@ -18,6 +18,20 @@ void handler_router::on_r_stick_y_move(
     ctx->get_state().on_r_stick_y_move(ctx, y_location);
 }
 
+void handler_router::on_l2_move(
+    const std::shared_ptr<context>& ctx,
+    const uint8_t location)
+{
+    ctx->get_state().on_l2_move(ctx, location);
+}
+
+void handler_router::on_r2_move(
+    const std::shared_ptr<context>& ctx,
+    const uint8_t location)
+{
+    ctx->get_state().on_r2_move(ctx, location);
+}
+
 void handler_router::on_left_button(const std::shared_ptr<context>& ctx)
 {
     ctx->get_state().on_left_button(ctx);

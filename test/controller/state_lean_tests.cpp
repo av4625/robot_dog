@@ -70,6 +70,18 @@ TEST_F(StateLeanTests, OnRStickYMoveWillSetRobotForwardBack)
     state_lean_.on_r_stick_y_move(context_mock_, y);
 }
 
+TEST_F(StateLeanTests, OnL2MoveWillDoNothing)
+{
+    const uint8_t location{1};
+    state_lean_.on_l2_move(context_mock_, location);
+}
+
+TEST_F(StateLeanTests, OnR2MoveWillDoNothing)
+{
+    const uint8_t location{2};
+    state_lean_.on_r2_move(context_mock_, location);
+}
+
 TEST_F(StateLeanTests, OnLeftButtonWillDoNothing)
 {
     state_lean_.on_left_button(context_mock_);

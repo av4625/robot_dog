@@ -66,6 +66,24 @@ TEST_F(ControllerTests, OnRStickYMoveWillCallOnRStickYMove)
     controller_.on_r_stick_y_move(y);
 }
 
+TEST_F(ControllerTests, OnL2MoveWillCallStateOnL2Move)
+{
+    const uint8_t location(200);
+
+    EXPECT_CALL(*handlers_mock_, on_l2_move(context_, location));
+
+    controller_.on_l2_move(location);
+}
+
+TEST_F(ControllerTests, OnR2MoveWillCallOnR2Move)
+{
+    const uint8_t location(201);
+
+    EXPECT_CALL(*handlers_mock_, on_r2_move(context_, location));
+
+    controller_.on_r2_move(location);
+}
+
 TEST_F(ControllerTests, OnLeftButtonWillCallOnLeftButton)
 {
     EXPECT_CALL(*handlers_mock_, on_left_button(context_));

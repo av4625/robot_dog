@@ -23,6 +23,18 @@ void state_base::on_r_stick_y_move(
 {
 }
 
+void state_base::on_l2_move(
+    const std::shared_ptr<context>& ctx,
+    const uint8_t location)
+{
+}
+
+void state_base::on_r2_move(
+    const std::shared_ptr<context>& ctx,
+    const uint8_t location)
+{
+}
+
 void state_base::on_left_button(const std::shared_ptr<context>& ctx)
 {
 }

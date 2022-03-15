@@ -40,6 +40,16 @@ void controller::on_r_stick_y_move(const int8_t y_location)
     handlers_->on_r_stick_y_move(ctx_, y_location);
 }
 
+void controller::on_l2_move(const uint8_t location)
+{
+    handlers_->on_l2_move(ctx_, location);
+}
+
+void controller::on_r2_move(const uint8_t location)
+{
+    handlers_->on_r2_move(ctx_, location);
+}
+
 void controller::on_left_button()
 {
     handlers_->on_left_button(ctx_);

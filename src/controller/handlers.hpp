@@ -21,6 +21,14 @@ public:
         const std::shared_ptr<context>& ctx,
         int8_t y_location) = 0;
 
+    virtual void on_l2_move(
+        const std::shared_ptr<context>& ctx,
+        uint8_t location) = 0;
+
+    virtual void on_r2_move(
+        const std::shared_ptr<context>& ctx,
+        uint8_t location) = 0;
+
     virtual void on_left_button(const std::shared_ptr<context>& ctx) = 0;
 
     virtual void on_right_button(const std::shared_ptr<context>& ctx) = 0;

@@ -62,6 +62,32 @@ TEST_F(HandlerRouterTests, OnRStickYMoveWillCallActiveStateOnRStickYMove)
     handler_router_.on_r_stick_y_move(context_, y);
 }
 
+TEST_F(HandlerRouterTests, OnL2MoveWillCallActiveStateOnL2Move)
+{
+    const uint8_t location(246);
+
+    EXPECT_CALL(state_mock_, on_l2_move(
+        ::testing::Ref(context_), location));
+
+    EXPECT_CALL(*context_mock_, get_state())
+        .WillOnce(::testing::ReturnRef(state_mock_));
+
+    handler_router_.on_l2_move(context_, location);
+}
+
+TEST_F(HandlerRouterTests, OnR2MoveWillCallActiveStateOnR2Move)
+{
+    const uint8_t location(100);
+
+    EXPECT_CALL(state_mock_, on_r2_move(
+        ::testing::Ref(context_), location));
+
+    EXPECT_CALL(*context_mock_, get_state())
+        .WillOnce(::testing::ReturnRef(state_mock_));
+
+    handler_router_.on_r2_move(context_, location);
+}
+
 TEST_F(HandlerRouterTests, OnLeftButtonWillCallActiveStateOnLeftButton)
 {
     EXPECT_CALL(state_mock_, on_left_button(

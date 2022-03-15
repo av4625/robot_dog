@@ -33,6 +33,10 @@ public:
 
     void on_r_stick_y_move(int8_t y_location);
 
+    void on_l2_move(uint8_t location);
+
+    void on_r2_move(uint8_t location);
+
     void on_left_button();
 
     void on_right_button();

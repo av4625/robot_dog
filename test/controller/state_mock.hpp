@@ -38,6 +38,18 @@ public:
 
     MOCK_METHOD(
         void,
+        on_l2_move,
+        (const std::shared_ptr<context>& ctx, uint8_t location),
+        (override));
+
+    MOCK_METHOD(
+        void,
+        on_r2_move,
+        (const std::shared_ptr<context>& ctx, uint8_t location),
+        (override));
+
+    MOCK_METHOD(
+        void,
         on_left_button,
         (const std::shared_ptr<context>& ctx),
         (override));

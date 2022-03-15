@@ -17,6 +17,14 @@ public:
         const std::shared_ptr<context>& ctx,
         int8_t y_location) override;
 
+    void on_l2_move(
+        const std::shared_ptr<context>& ctx,
+        uint8_t location) override;
+
+    void on_r2_move(
+        const std::shared_ptr<context>& ctx,
+        uint8_t location) override;
+
     void on_left_button(const std::shared_ptr<context>& ctx) override;
 
     void on_right_button(const std::shared_ptr<context>& ctx) override;

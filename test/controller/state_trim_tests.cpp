@@ -109,6 +109,18 @@ TEST_F(StateTrimTests, OnRStickYMoveWillDoNothing)
     state_trim_.on_r_stick_y_move(context_mock_, y);
 }
 
+TEST_F(StateTrimTests, OnL2MoveWillDoNothing)
+{
+    const uint8_t location{1};
+    state_trim_.on_l2_move(context_mock_, location);
+}
+
+TEST_F(StateTrimTests, OnR2MoveWillDoNothing)
+{
+    const uint8_t location{2};
+    state_trim_.on_r2_move(context_mock_, location);
+}
+
 TEST_F(StateTrimTests, OnLeftButtonWillTrimActiveLimbKneeJointAntiClockwise)
 {
     EXPECT_CALL(*robot_mock_, trim_joint(
