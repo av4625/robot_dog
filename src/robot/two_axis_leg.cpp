@@ -23,6 +23,8 @@ const double two_hundred_and_ten_degrees_radians{
 const short min_servo_microseconds{500};
 const short max_servo_microseconds{2500};
 
+const uint8_t trim_amount_microseconds{10};
+
 }
 
 two_axis_leg::two_axis_leg(
@@ -63,10 +65,26 @@ two_axis_leg::two_axis_leg(
         current_move_type_(utility::robot::movement::interpolation),
         shoulder_trim_offset_microseconds_(0),
         knee_trim_offset_microseconds_(0),
-        min_servo_microseconds_shoulder_(min_servo_microseconds),
-        max_servo_microseconds_shoulder_(max_servo_microseconds),
-        min_servo_microseconds_knee_(min_servo_microseconds),
-        max_servo_microseconds_knee_(max_servo_microseconds),
+        /* Small angle is clockwise for the left side so min microseconds,
+           opposite for the right side */
+        min_angle_shoulder_microseconds_(
+            (side_ == utility::robot::side::left) ?
+                min_servo_microseconds : max_servo_microseconds),
+        /* Big angle is anti clockwise for the left side so max microseconds,
+           opposite for the right side */
+        max_angle_shoulder_microseconds_(
+            (side_ == utility::robot::side::left) ?
+                max_servo_microseconds : min_servo_microseconds),
+        /* Small angle is anti clockwise for the left side so max microseconds,
+           opposite for the right side */
+        min_angle_knee_microseconds_(
+            (side_ == utility::robot::side::left) ?
+                max_servo_microseconds : min_servo_microseconds),
+        /* Big angle is clockwise for the left side so min microseconds,
+           opposite for the right side */
+        max_angle_knee_microseconds_(
+            (side_ == utility::robot::side::left) ?
+                min_servo_microseconds : max_servo_microseconds),
         has_position_changed_(true)
 {
 }
@@ -79,14 +97,10 @@ void two_axis_leg::begin(const short shoulder_trim, const short knee_trim)
     shoulder_trim_offset_microseconds_ = shoulder_trim;
     knee_trim_offset_microseconds_ = knee_trim;
 
-    min_servo_microseconds_shoulder_ =
-        min_servo_microseconds + shoulder_trim_offset_microseconds_;
-    max_servo_microseconds_shoulder_ =
-        max_servo_microseconds + shoulder_trim_offset_microseconds_;
-    min_servo_microseconds_knee_ =
-        min_servo_microseconds + knee_trim_offset_microseconds_;
-    max_servo_microseconds_knee_ =
-        max_servo_microseconds + knee_trim_offset_microseconds_;
+    min_angle_shoulder_microseconds_ += shoulder_trim_offset_microseconds_;
+    max_angle_shoulder_microseconds_ += shoulder_trim_offset_microseconds_;
+    min_angle_knee_microseconds_ += knee_trim_offset_microseconds_;
+    max_angle_knee_microseconds_ += knee_trim_offset_microseconds_;
 }
 
 void two_axis_leg::set_position(
@@ -191,19 +205,24 @@ short two_axis_leg::trim_joint(
     {
         if (direction == utility::robot::direction::clockwise)
         {
-            shoulder_trim_offset_microseconds_ -= 10;
-            move_to_position(joint, previous_shoulder_microseconds_ -= 10);
+            shoulder_trim_offset_microseconds_ -= trim_amount_microseconds;
+            min_angle_shoulder_microseconds_ -= trim_amount_microseconds;
+            max_angle_shoulder_microseconds_ -= trim_amount_microseconds;
+
+            move_to_position(
+                joint,
+                previous_shoulder_microseconds_ -= trim_amount_microseconds);
         }
         else
         {
-            shoulder_trim_offset_microseconds_ += 10;
-            move_to_position(joint, previous_shoulder_microseconds_ += 10);
-        }
+            shoulder_trim_offset_microseconds_ += trim_amount_microseconds;
+            min_angle_shoulder_microseconds_ += trim_amount_microseconds;
+            max_angle_shoulder_microseconds_ += trim_amount_microseconds;
 
-        min_servo_microseconds_shoulder_ =
-            min_servo_microseconds + shoulder_trim_offset_microseconds_;
-        max_servo_microseconds_shoulder_ =
-            max_servo_microseconds + shoulder_trim_offset_microseconds_;
+            move_to_position(
+                joint,
+                previous_shoulder_microseconds_ += trim_amount_microseconds);
+        }
 
         return shoulder_trim_offset_microseconds_;
     }
@@ -211,19 +230,24 @@ short two_axis_leg::trim_joint(
     {
         if (direction == utility::robot::direction::clockwise)
         {
-            knee_trim_offset_microseconds_ -= 10;
-            move_to_position(joint, previous_knee_microseconds_ -= 10);
+            knee_trim_offset_microseconds_ -= trim_amount_microseconds;
+            min_angle_knee_microseconds_ -= trim_amount_microseconds;
+            max_angle_knee_microseconds_ -= trim_amount_microseconds;
+
+            move_to_position(
+                joint,
+                previous_knee_microseconds_ -= trim_amount_microseconds);
         }
         else
         {
-            knee_trim_offset_microseconds_ += 10;
-            move_to_position(joint, previous_knee_microseconds_ += 10);
-        }
+            knee_trim_offset_microseconds_ += trim_amount_microseconds;
+            min_angle_knee_microseconds_ += trim_amount_microseconds;
+            max_angle_knee_microseconds_ += trim_amount_microseconds;
 
-        min_servo_microseconds_knee_ =
-            min_servo_microseconds + knee_trim_offset_microseconds_;
-        max_servo_microseconds_knee_ =
-            max_servo_microseconds + knee_trim_offset_microseconds_;
+            move_to_position(
+                joint,
+                previous_knee_microseconds_ += trim_amount_microseconds);
+        }
 
         return knee_trim_offset_microseconds_;
     }
@@ -259,8 +283,8 @@ std::pair<short, short> two_axis_leg::calculate_servo_microseconds(
                 shoulder_angle,
                 -forty_five_degrees_radians,
                 one_hundred_and_thirty_five_degrees_radians,
-                min_servo_microseconds_shoulder_,
-                max_servo_microseconds_shoulder_)),
+                min_angle_shoulder_microseconds_,
+                max_angle_shoulder_microseconds_)),
             min_servo_microseconds,
             max_servo_microseconds),
         // White robot leg settings
@@ -278,8 +302,8 @@ std::pair<short, short> two_axis_leg::calculate_servo_microseconds(
                 knee_angle,
                 thirty_degrees_radians,
                 two_hundred_and_ten_degrees_radians,
-                max_servo_microseconds_knee_,
-                min_servo_microseconds_knee_)),
+                min_angle_knee_microseconds_,
+                max_angle_knee_microseconds_)),
             min_servo_microseconds,
             max_servo_microseconds));
 }

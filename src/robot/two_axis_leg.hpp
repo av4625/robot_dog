@@ -79,10 +79,10 @@ private:
     utility::robot::movement current_move_type_;
     short shoulder_trim_offset_microseconds_;
     short knee_trim_offset_microseconds_;
-    short min_servo_microseconds_shoulder_;
-    short max_servo_microseconds_shoulder_;
-    short min_servo_microseconds_knee_;
-    short max_servo_microseconds_knee_;
+    short min_angle_shoulder_microseconds_;
+    short max_angle_shoulder_microseconds_;
+    short min_angle_knee_microseconds_;
+    short max_angle_knee_microseconds_;
     bool has_position_changed_;
 
     std::pair<float, float> generate_angles(

@@ -32,7 +32,6 @@ const short starting_microseconds{1500};
 const double zero_degrees_radians{0};
 const double thirty_degrees_radians{M_PI / 6};
 const double forty_five_degrees_radians{M_PI / 4};
-const double ninety_degrees_radians{M_PI / 2};
 const double one_hundred_and_thirty_five_degrees_radians{
     M_PI - forty_five_degrees_radians};
 const double one_hundred_and_eighty_degrees_radians{M_PI};
@@ -42,14 +41,6 @@ const short starting_shoulder_trim{0};
 const short starting_knee_trim{0};
 const short min_servo_microseconds{500};
 const short max_servo_microseconds{2500};
-const short min_servo_microseconds_shoulder{
-    min_servo_microseconds + starting_shoulder_trim};
-const short max_servo_microseconds_shoulder{
-    max_servo_microseconds + starting_shoulder_trim};
-const short min_servo_microseconds_knee{
-    min_servo_microseconds + starting_knee_trim};
-const short max_servo_microseconds_knee{
-    max_servo_microseconds + starting_knee_trim};
 
 struct trim_params
 {
@@ -58,12 +49,14 @@ struct trim_params
         const short begin_knee,
         const utility::robot::joint joint,
         const utility::robot::direction direction,
-        const short trim_value) :
+        const short trim_value,
+        const utility::robot::side side) :
             begin_shoulder(begin_shoulder),
             begin_knee(begin_knee),
             joint(joint),
             direction(direction),
-            trim_value(trim_value)
+            trim_value(trim_value),
+            side(side)
     {
     }
 
@@ -72,8 +65,11 @@ struct trim_params
     const utility::robot::joint joint;
     const utility::robot::direction direction;
     const short trim_value;
+    const utility::robot::side side;
 };
 
+// create_leg needs to be called by the tests so that we can parameterise the
+// side
 class TwoAxisLegTests : public ::testing::Test
 {
 protected:
@@ -100,24 +96,17 @@ protected:
         knee_smoother_mock_(new mathmatics::smoother_mock()),
         knee_smoother_mock_ptr_(dynamic_cast<mathmatics::smoother_mock*>(
             knee_smoother_mock_.get())),
+        // Defaulting to left side
+        min_angle_shoulder_microseconds_(
+            min_servo_microseconds + starting_shoulder_trim),
+        max_angle_shoulder_microseconds_(
+            max_servo_microseconds + starting_shoulder_trim),
+        min_angle_knee_microseconds_(
+            max_servo_microseconds + starting_knee_trim),
+        max_angle_knee_microseconds_(
+            min_servo_microseconds + starting_knee_trim),
         calc_mock_(std::make_shared<const mathmatics::calculations_mock>())
     {
-        EXPECT_CALL(*shoulder_servo_mock_ptr_, get_minimum_time_for_180())
-            .Times(2).WillRepeatedly(::testing::Return(500));
-        EXPECT_CALL(*knee_servo_mock_ptr_, get_minimum_time_for_180())
-            .WillOnce(::testing::Return(499));
-
-        two_axis_leg_.reset(new two_axis_leg(
-            forward_back_triangle_mock_,
-            height_triangle_mock_,
-            std::move(shoulder_servo_mock_),
-            std::move(knee_servo_mock_),
-            std::move(shoulder_interpolation_mock_),
-            std::move(knee_interpolation_mock_),
-            std::move(shoulder_smoother_mock_),
-            std::move(knee_smoother_mock_),
-            calc_mock_,
-            utility::robot::side::left));
     }
 
     const std::shared_ptr<
@@ -137,7 +126,60 @@ protected:
     std::unique_ptr<mathmatics::smoother> knee_smoother_mock_;
     mathmatics::smoother_mock* knee_smoother_mock_ptr_;
     const std::shared_ptr<const mathmatics::calculations_mock> calc_mock_;
+    short min_angle_shoulder_microseconds_;
+    short max_angle_shoulder_microseconds_;
+    short min_angle_knee_microseconds_;
+    short max_angle_knee_microseconds_;
     std::unique_ptr<leg> two_axis_leg_;
+
+    void create_leg(
+        const utility::robot::side side = utility::robot::side::left)
+    {
+        set_min_max_microseconds(side);
+
+        EXPECT_CALL(*shoulder_servo_mock_ptr_, get_minimum_time_for_180())
+            .Times(2).WillRepeatedly(::testing::Return(500));
+        EXPECT_CALL(*knee_servo_mock_ptr_, get_minimum_time_for_180())
+            .WillOnce(::testing::Return(499));
+
+        two_axis_leg_.reset(new two_axis_leg(
+            forward_back_triangle_mock_,
+            height_triangle_mock_,
+            std::move(shoulder_servo_mock_),
+            std::move(knee_servo_mock_),
+            std::move(shoulder_interpolation_mock_),
+            std::move(knee_interpolation_mock_),
+            std::move(shoulder_smoother_mock_),
+            std::move(knee_smoother_mock_),
+            calc_mock_,
+            side));
+    }
+
+    void set_min_max_microseconds(const utility::robot::side side)
+    {
+        if (side == utility::robot::side::left)
+        {
+            min_angle_shoulder_microseconds_ =
+                min_servo_microseconds + starting_shoulder_trim;
+            max_angle_shoulder_microseconds_ =
+                max_servo_microseconds + starting_shoulder_trim;
+            min_angle_knee_microseconds_ =
+                max_servo_microseconds + starting_knee_trim;
+            max_angle_knee_microseconds_ =
+                min_servo_microseconds + starting_knee_trim;
+        }
+        else
+        {
+            min_angle_shoulder_microseconds_ =
+                max_servo_microseconds + starting_shoulder_trim;
+            max_angle_shoulder_microseconds_ =
+                min_servo_microseconds + starting_shoulder_trim;
+            min_angle_knee_microseconds_ =
+                min_servo_microseconds + starting_knee_trim;
+            max_angle_knee_microseconds_ =
+                max_servo_microseconds + starting_knee_trim;
+        }
+    }
 
     void set_calculations_servo_expectations(
         const short shoulder_microseconds_ret,
@@ -149,16 +191,16 @@ protected:
             shoulder_angle,
             -forty_five_degrees_radians,
             one_hundred_and_thirty_five_degrees_radians,
-            min_servo_microseconds_shoulder,
-            max_servo_microseconds_shoulder
+            min_angle_shoulder_microseconds_,
+            max_angle_shoulder_microseconds_
         )).WillOnce(::testing::Return(shoulder_microseconds_ret));
 
         EXPECT_CALL(*calc_mock_, map(
             knee_angle,
             thirty_degrees_radians,
             two_hundred_and_ten_degrees_radians,
-            max_servo_microseconds_knee,
-            min_servo_microseconds_knee
+            min_angle_knee_microseconds_,
+            max_angle_knee_microseconds_
         )).WillOnce(::testing::Return(knee_microseconds_ret));
 
         EXPECT_CALL(*calc_mock_, constrict(
@@ -344,18 +386,32 @@ protected:
     }
 };
 
+class TwoAxisLegSideTests :
+    public TwoAxisLegTests,
+    public ::testing::WithParamInterface<utility::robot::side>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    Values,
+    TwoAxisLegSideTests,
+    ::testing::Values(
+        utility::robot::side::left,
+        utility::robot::side::right));
 }
 
-TEST_F(TwoAxisLegTests, BeginWillCallBeginForBothServos)
+TEST_P(TwoAxisLegSideTests, BeginWillCallBeginForBothServos)
 {
+    create_leg(GetParam());
     EXPECT_CALL(*shoulder_servo_mock_ptr_, begin());
     EXPECT_CALL(*knee_servo_mock_ptr_, begin());
     two_axis_leg_->begin(starting_shoulder_trim, starting_knee_trim);
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenBothServosArentFinishedAndInterpolationWillUpdateServos)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation();
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
@@ -368,9 +424,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_FALSE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenOneServoIsntFinishedAndInterpolationWillUpdateServos)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation();
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
@@ -385,9 +442,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_FALSE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenLastUpdateAndInterpolationWillUpdateServosAndReturnTrue)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation();
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
@@ -403,9 +461,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenBothServosAreFinishedAndInterpolationWillNotUpdateServos)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation();
 
     EXPECT_CALL(*shoulder_interpolation_mock_ptr_, is_finished())
@@ -421,9 +480,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenBothServosArentFinishedAndSmoothWillUpdateServos)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth();
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
@@ -436,9 +496,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_FALSE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenOneServoIsntFinishedAndSmoothWillUpdateServos)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth();
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
@@ -453,9 +514,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_FALSE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenLastUpdateAndSmoothWillUpdateServosAndReturnTrue)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth();
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
@@ -471,9 +533,10 @@ TEST_F(TwoAxisLegTests,
     EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     UpdatePositionWhenBothServosAreFinishedAndSmoothWillNotUpdateServos)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth();
 
     EXPECT_CALL(*shoulder_smoother_mock_ptr_, is_finished())
@@ -489,24 +552,27 @@ TEST_F(TwoAxisLegTests,
     EXPECT_TRUE(two_axis_leg_->update_position());
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsFirstNewPositionAndInterpolationWillSetPosition)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation();
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsSecondSamePositionAndInterpolationWillNotSetPositionTwice)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation();
 
     two_axis_leg_->set_position(
         127, 127, utility::robot::movement::interpolation);
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsNewHeightAndInterpolationWillSetPosition)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation(2);
 
     const int8_t height{-128};
@@ -533,9 +599,10 @@ TEST_F(TwoAxisLegTests,
         height, forward_back, utility::robot::movement::interpolation);
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsNewForwardBackAndInterpolationWillSetPosition)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_interpolation(2);
 
     const int8_t height{127};
@@ -562,23 +629,26 @@ TEST_F(TwoAxisLegTests,
         height, forward_back, utility::robot::movement::interpolation);
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsFirstNewPositionAndSmoothWillSetPosition)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth();
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsSecondSamePositionAndSmoothWillNotSetPositionTwice)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth();
 
     two_axis_leg_->set_position(127, 127, utility::robot::movement::smooth);
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsNewHeightAndSmoothWillSetPosition)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth(2);
 
     const int8_t height{-128};
@@ -605,9 +675,10 @@ TEST_F(TwoAxisLegTests,
         height, forward_back, utility::robot::movement::smooth);
 }
 
-TEST_F(TwoAxisLegTests,
+TEST_P(TwoAxisLegSideTests,
     SetPositionWhenItsNewForwardBackAndSmoothWillSetPosition)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth(2);
 
     const int8_t height{127};
@@ -634,8 +705,9 @@ TEST_F(TwoAxisLegTests,
         height, forward_back, utility::robot::movement::smooth);
 }
 
-TEST_F(TwoAxisLegTests, SetHeightWillUsePreviousForwardBack)
+TEST_P(TwoAxisLegSideTests, SetHeightWillUsePreviousForwardBack)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth(2);
 
     const int8_t height{-128};
@@ -661,8 +733,9 @@ TEST_F(TwoAxisLegTests, SetHeightWillUsePreviousForwardBack)
     two_axis_leg_->set_height(height, utility::robot::movement::smooth);
 }
 
-TEST_F(TwoAxisLegTests, SetForwardBackWillUsePreviousHeight)
+TEST_P(TwoAxisLegSideTests, SetForwardBackWillUsePreviousHeight)
 {
+    create_leg(GetParam());
     set_max_height_and_forward_smooth(2);
 
     const int8_t height{127};
@@ -689,8 +762,10 @@ TEST_F(TwoAxisLegTests, SetForwardBackWillUsePreviousHeight)
         forward_back, utility::robot::movement::smooth);
 }
 
-TEST_F(TwoAxisLegTests, SetLegStraightDownWillFullyExtendLeg)
+TEST_P(TwoAxisLegSideTests, SetLegStraightDownWillFullyExtendLeg)
 {
+    create_leg(GetParam());
+
     set_calculations_servo_expectations(
         2000,
         2001,
@@ -707,8 +782,10 @@ TEST_F(TwoAxisLegTests, SetLegStraightDownWillFullyExtendLeg)
     two_axis_leg_->set_leg_straight_down();
 }
 
-TEST_F(TwoAxisLegTests, SetLegNeutralPositionWillSetMiddleHeight)
+TEST_P(TwoAxisLegSideTests, SetLegNeutralPositionWillSetMiddleHeight)
 {
+    create_leg(GetParam());
+
     // Set it to something other than the starting neutral so that calling
     // neutral looks like a new position
    set_max_height_and_forward_smooth(2);
@@ -746,6 +823,8 @@ class TwoAxisLegTestsTrim :
 
 TEST_P(TwoAxisLegTestsTrim, TrimJointWillReturnCorrectTrimValue)
 {
+    create_leg(GetParam().side);
+
     EXPECT_CALL(*shoulder_servo_mock_ptr_, begin());
     EXPECT_CALL(*knee_servo_mock_ptr_, begin());
     two_axis_leg_->begin(GetParam().begin_shoulder, GetParam().begin_knee);
@@ -790,52 +869,118 @@ INSTANTIATE_TEST_SUITE_P(
             0,
             utility::robot::joint::shoulder,
             utility::robot::direction::clockwise,
-            -10),
+            -10,
+            utility::robot::side::left),
         trim_params(
             0,
             0,
             utility::robot::joint::knee,
             utility::robot::direction::clockwise,
-            -10),
+            -10,
+            utility::robot::side::left),
         trim_params(
             0,
             0,
             utility::robot::joint::shoulder,
             utility::robot::direction::anti_clockwise,
-            10),
+            10,
+            utility::robot::side::left),
         trim_params(
             0,
             0,
             utility::robot::joint::knee,
             utility::robot::direction::anti_clockwise,
-            10),
+            10,
+            utility::robot::side::left),
         trim_params(
             100,
             0,
             utility::robot::joint::shoulder,
             utility::robot::direction::clockwise,
-            90),
+            90,
+            utility::robot::side::left),
         trim_params(
             0,
             100,
             utility::robot::joint::knee,
             utility::robot::direction::clockwise,
-            90),
+            90,
+            utility::robot::side::left),
         trim_params(
             100,
             0,
             utility::robot::joint::shoulder,
             utility::robot::direction::anti_clockwise,
-            110),
+            110,
+            utility::robot::side::left),
         trim_params(
             0,
             100,
             utility::robot::joint::knee,
             utility::robot::direction::anti_clockwise,
-            110)));
+            110,
+            utility::robot::side::left),
+        trim_params(
+            0,
+            0,
+            utility::robot::joint::shoulder,
+            utility::robot::direction::clockwise,
+            -10,
+            utility::robot::side::right),
+        trim_params(
+            0,
+            0,
+            utility::robot::joint::knee,
+            utility::robot::direction::clockwise,
+            -10,
+            utility::robot::side::right),
+        trim_params(
+            0,
+            0,
+            utility::robot::joint::shoulder,
+            utility::robot::direction::anti_clockwise,
+            10,
+            utility::robot::side::right),
+        trim_params(
+            0,
+            0,
+            utility::robot::joint::knee,
+            utility::robot::direction::anti_clockwise,
+            10,
+            utility::robot::side::right),
+        trim_params(
+            100,
+            0,
+            utility::robot::joint::shoulder,
+            utility::robot::direction::clockwise,
+            90,
+            utility::robot::side::right),
+        trim_params(
+            0,
+            100,
+            utility::robot::joint::knee,
+            utility::robot::direction::clockwise,
+            90,
+            utility::robot::side::right),
+        trim_params(
+            100,
+            0,
+            utility::robot::joint::shoulder,
+            utility::robot::direction::anti_clockwise,
+            110,
+            utility::robot::side::right),
+        trim_params(
+            0,
+            100,
+            utility::robot::joint::knee,
+            utility::robot::direction::anti_clockwise,
+            110,
+            utility::robot::side::right)));
 
-TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
+TEST_P(TwoAxisLegSideTests, UpdatePositionUsesTrimValues)
 {
+    create_leg(GetParam());
+
     // Begin with 50 and 100 trim values. Not setting position with these yet
     EXPECT_CALL(*shoulder_servo_mock_ptr_, begin());
     EXPECT_CALL(*knee_servo_mock_ptr_, begin());
@@ -889,16 +1034,16 @@ TEST_F(TwoAxisLegTests, UpdatePositionUsesTrimValues)
         10 + 40,
         -forty_five_degrees_radians,
         one_hundred_and_thirty_five_degrees_radians,
-        min_servo_microseconds_shoulder + shoulder_trim,
-        max_servo_microseconds_shoulder + shoulder_trim
+        min_angle_shoulder_microseconds_ + shoulder_trim,
+        max_angle_shoulder_microseconds_ + shoulder_trim
     )).WillOnce(::testing::Return(1000));
 
     EXPECT_CALL(*calc_mock_, map(
         60,
         thirty_degrees_radians,
         two_hundred_and_ten_degrees_radians,
-        max_servo_microseconds_knee + knee_trim,
-        min_servo_microseconds_knee + knee_trim
+        min_angle_knee_microseconds_ + knee_trim,
+        max_angle_knee_microseconds_ + knee_trim
     )).WillOnce(::testing::Return(2000));
 
     EXPECT_CALL(*calc_mock_, constrict(
