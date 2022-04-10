@@ -22,7 +22,7 @@ const std::shared_ptr<hal::hardware::gamepad_factory> gamepad_factory{
     std::make_shared<hal::hardware::gamepad_factory_impl>()};
 const std::shared_ptr<hal::hardware::gamepad> gamepad{
     gamepad_factory->create_ps4_gamepad(
-        "11:11:11:11:11:11",
+        "00:02:03:04:05:06",
         &ps4_controller_connected,
         &ps4_controller_event)};
 

@@ -10,7 +10,6 @@
 
 #include <hal/hardware/servo_mock.hpp>
 #include <hal/interpolation_mock.hpp>
-#include <mathmatics/calculations_impl.hpp>
 #include <mathmatics/calculations_mock.hpp>
 #include <mathmatics/smoother_mock.hpp>
 #include <mathmatics/trigonometry/isosceles_triangle_mock.hpp>

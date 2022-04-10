@@ -94,7 +94,7 @@ void state_trim::on_r1_button(const std::shared_ptr<context>& ctx)
 void state_trim::on_cross_button(const std::shared_ptr<context>& ctx)
 {
     ctx->small_rumble_controller(250);
-    active_limb_index_ = ++active_limb_index_ % number_of_limbs_;
+    active_limb_index_ = (active_limb_index_ + 1) % number_of_limbs_;
 }
 
 void state_trim::on_circle_button(const std::shared_ptr<context>& ctx)

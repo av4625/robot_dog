@@ -119,8 +119,8 @@ will be executed on core one, possibly slowing down reading from the gamepad.
 #### Trimming Mode
 - Left Arrow: Trim active limbs knee joint to the left (looking from the side)
 - Right Arrow: Trim active limbs knee joint to the right (looking from the side)
-- L1 Arrow: Trim active limbs shoulder joint to the left (looking from the side)
-- R1 Arrow: Trim active limbs shoulder joint to the right (looking from the
+- L1: Trim active limbs shoulder joint to the left (looking from the side)
+- R1: Trim active limbs shoulder joint to the right (looking from the
 side)
 - Cross: Move to next limb
 - Circle: Change to leaning mode without saving trim values

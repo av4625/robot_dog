@@ -53,7 +53,8 @@ void context_impl::small_rumble_controller(const short milliseconds) const
      * Pass shared_from_this to keep context_impl alive, pass this for ease of
      * using member data
      */
-    executer_->execute([&milliseconds, lifetime = shared_from_this(), this] ()
+    const auto lifetime{shared_from_this()};
+    executer_->execute([&milliseconds, lifetime, this] ()
     {
         gamepad_->set_rumble(255, 0);
         gamepad_->send();
@@ -69,7 +70,8 @@ void context_impl::large_rumble_controller(const short milliseconds) const
      * Pass shared_from_this to keep context_impl alive, pass this for ease of
      * using member data
      */
-    executer_->execute([&milliseconds, lifetime = shared_from_this(), this] ()
+    const auto lifetime{shared_from_this()};
+    executer_->execute([&milliseconds, lifetime, this] ()
     {
         gamepad_->set_rumble(0, 255);
         gamepad_->send();
