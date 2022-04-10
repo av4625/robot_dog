@@ -68,7 +68,8 @@ const std::shared_ptr<robot::robot> dog{
             calculations,
             hal::hardware::D33,
             hal::hardware::D25),
-        std::move(config_manager))};
+        std::move(config_manager),
+        calculations)};
 
 const std::shared_ptr<controller::controller> robot_controller{
     controller::controller::create(
@@ -76,14 +77,6 @@ const std::shared_ptr<controller::controller> robot_controller{
         gamepad,
         executer,
         arduino)};
-
-// const std::unique_ptr<robot::leg> leg{
-//     leg_factory->create(
-//         utility::robot::leg_type::two_axis,
-//         arduino,
-//         calculations,
-//         hal::hardware::D18,
-//         hal::hardware::D5)};
 
 utility::gamepad::atomic_events gamepad_events{
     {0}, {0}, {false}, {false}, {false}, {false}, {false}, {false}, {false}};
@@ -130,9 +123,19 @@ void ps4_controller_event(utility::gamepad::events&& events)
         gamepad_events.l_stick_y = events.l_stick_y.first;
     }
 
+    if (events.l_stick_x.second)
+    {
+        gamepad_events.l_stick_x = events.l_stick_x.first;
+    }
+
     if (events.r_stick_y.second)
     {
         gamepad_events.r_stick_y = events.r_stick_y.first;
+    }
+
+    if (events.r_stick_x.second)
+    {
+        gamepad_events.r_stick_x = events.r_stick_x.first;
     }
 
     if (events.l2.second)
@@ -158,7 +161,9 @@ void control_robot(void* params)
 {
     while (true)
     {
+        robot_controller->on_l_stick_x_move(gamepad_events.l_stick_x);
         robot_controller->on_l_stick_y_move(gamepad_events.l_stick_y);
+        robot_controller->on_r_stick_x_move(gamepad_events.r_stick_x);
         robot_controller->on_r_stick_y_move(gamepad_events.r_stick_y);
 
         // Could miss button presses using this approach

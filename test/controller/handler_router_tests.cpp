@@ -36,6 +36,19 @@ protected:
 
 }
 
+TEST_F(HandlerRouterTests, OnLStickXMoveWillCallActiveStateOnLStickXMove)
+{
+    const int8_t x(25);
+
+    EXPECT_CALL(state_mock_, on_l_stick_x_move(
+        ::testing::Ref(context_), x));
+
+    EXPECT_CALL(*context_mock_, get_state())
+        .WillOnce(::testing::ReturnRef(state_mock_));
+
+    handler_router_.on_l_stick_x_move(context_, x);
+}
+
 TEST_F(HandlerRouterTests, OnLStickYMoveWillCallActiveStateOnLStickYMove)
 {
     const int8_t y(25);
@@ -47,6 +60,19 @@ TEST_F(HandlerRouterTests, OnLStickYMoveWillCallActiveStateOnLStickYMove)
         .WillOnce(::testing::ReturnRef(state_mock_));
 
     handler_router_.on_l_stick_y_move(context_, y);
+}
+
+TEST_F(HandlerRouterTests, OnRStickXMoveWillCallActiveStateOnRStickXMove)
+{
+    const int8_t x(25);
+
+    EXPECT_CALL(state_mock_, on_r_stick_x_move(
+        ::testing::Ref(context_), x));
+
+    EXPECT_CALL(*context_mock_, get_state())
+        .WillOnce(::testing::ReturnRef(state_mock_));
+
+    handler_router_.on_r_stick_x_move(context_, x);
 }
 
 TEST_F(HandlerRouterTests, OnRStickYMoveWillCallActiveStateOnRStickYMove)

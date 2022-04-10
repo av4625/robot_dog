@@ -13,21 +13,21 @@ public:
 
     void on_entry(const std::shared_ptr<context>& ctx) override;
 
+    void on_l_stick_x_move(
+        const std::shared_ptr<context>& ctx,
+        int8_t x_location) override;
+
     void on_l_stick_y_move(
         const std::shared_ptr<context>& ctx,
         int8_t y_location) override;
 
+    void on_r_stick_x_move(
+        const std::shared_ptr<context>& ctx,
+        int8_t x_location) override;
+
     void on_r_stick_y_move(
         const std::shared_ptr<context>& ctx,
         int8_t y_location) override;
-
-    void on_l2_move(
-        const std::shared_ptr<context>& ctx,
-        uint8_t location) override;
-
-    void on_r2_move(
-        const std::shared_ptr<context>& ctx,
-        uint8_t location) override;
 
     void on_settings_button(const std::shared_ptr<context>& ctx) override;
 

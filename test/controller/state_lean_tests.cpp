@@ -48,6 +48,17 @@ TEST_F(StateLeanTests, OnExitWillDoNothing)
     state_lean_.on_exit(context_mock_);
 }
 
+TEST_F(StateLeanTests, OnLStickXMoveWillSetRobotForwardBack)
+{
+    const int8_t x{55};
+
+    EXPECT_CALL(*robot_mock_, set_forward_back(x));
+    EXPECT_CALL(*context_mock_, get_robot())
+        .WillOnce(::testing::Return(robot_mock_));
+
+    state_lean_.on_l_stick_x_move(context_mock_, x);
+}
+
 TEST_F(StateLeanTests, OnLStickYMoveWillSetRobotHeight)
 {
     const int8_t y{55};
@@ -59,11 +70,22 @@ TEST_F(StateLeanTests, OnLStickYMoveWillSetRobotHeight)
     state_lean_.on_l_stick_y_move(context_mock_, y);
 }
 
-TEST_F(StateLeanTests, OnRStickYMoveWillSetRobotForwardBack)
+TEST_F(StateLeanTests, OnRStickXMoveWillSetRobotSideToSideLean)
+{
+    const int8_t x{55};
+
+    EXPECT_CALL(*robot_mock_, set_side_to_side_lean(x));
+    EXPECT_CALL(*context_mock_, get_robot())
+        .WillOnce(::testing::Return(robot_mock_));
+
+    state_lean_.on_r_stick_x_move(context_mock_, x);
+}
+
+TEST_F(StateLeanTests, OnRStickYMoveWillSetRobotForwardBackLean)
 {
     const int8_t y{55};
 
-    EXPECT_CALL(*robot_mock_, set_forward_back(y));
+    EXPECT_CALL(*robot_mock_, set_forward_back_lean(y));
     EXPECT_CALL(*context_mock_, get_robot())
         .WillOnce(::testing::Return(robot_mock_));
 

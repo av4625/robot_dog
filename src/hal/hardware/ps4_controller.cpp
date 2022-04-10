@@ -71,6 +71,15 @@ void ps4_controller::event_callback()
             events.r_stick_y = std::make_pair(0, false);
         }
 
+        if(PS4.event.analog_move.stick.rx)
+        {
+            events.r_stick_x = std::make_pair(PS4.data.analog.stick.rx, true);
+        }
+        else
+        {
+            events.r_stick_x = std::make_pair(0, false);
+        }
+
         if(PS4.event.analog_move.stick.ly)
         {
             events.l_stick_y = std::make_pair(PS4.data.analog.stick.ly, true);
@@ -78,6 +87,15 @@ void ps4_controller::event_callback()
         else
         {
             events.l_stick_y = std::make_pair(0, false);
+        }
+
+        if(PS4.event.analog_move.stick.lx)
+        {
+            events.l_stick_x = std::make_pair(PS4.data.analog.stick.lx, true);
+        }
+        else
+        {
+            events.l_stick_x = std::make_pair(0, false);
         }
 
         if (PS4.event.analog_move.button.l2)

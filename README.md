@@ -80,6 +80,12 @@ sets it to the new starting location and forgets what was there before)
 presses when using the events version. Do I have to change to to looping and
 checking? :( (There is a bug in the library, I have created a pull request with
 the fix)
+- [ ] Add `dog_tests` that test the previous values
+- [ ] Add a smart algorithm that leans the opposite side more if the current
+side is already at max. For example, if the dog is standing full tall and it
+leans to the left, it will currently lower the left side and it can't raise the
+right as its at max height. It should lower the left side by double the amount
+in this case.
 - [ ] Use `minimum_time_for_max_rotation_`
 - [ ] Better name for `has_position_changed_` and tests for it
 - [ ] Make gait to lift opposite legs
@@ -112,7 +118,9 @@ will be executed on core one, possibly slowing down reading from the gamepad.
 - PS Button: Connects the controller to the dog
 
 #### Leaning Mode
+- Left Stick Left and Right: Move the body forward and back
 - Left Stick Up and Down: Change the height of the dog
+- Right Stick Left and Right: Lean the dog side to side
 - Right Stick Up and Down: Lean the dog forward and back
 - Options Button: Change to trimming mode
 

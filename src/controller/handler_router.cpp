@@ -4,11 +4,25 @@
 namespace controller
 {
 
+void handler_router::on_l_stick_x_move(
+    const std::shared_ptr<context>& ctx,
+    const int8_t x_location)
+{
+    ctx->get_state().on_l_stick_x_move(ctx, x_location);
+}
+
 void handler_router::on_l_stick_y_move(
     const std::shared_ptr<context>& ctx,
     const int8_t y_location)
 {
     ctx->get_state().on_l_stick_y_move(ctx, y_location);
+}
+
+void handler_router::on_r_stick_x_move(
+    const std::shared_ptr<context>& ctx,
+    const int8_t x_location)
+{
+    ctx->get_state().on_r_stick_x_move(ctx, x_location);
 }
 
 void handler_router::on_r_stick_y_move(

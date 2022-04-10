@@ -12,7 +12,9 @@ namespace gamepad
 struct events
 {
     std::pair<int8_t, bool> l_stick_y;
+    std::pair<int8_t, bool> l_stick_x;
     std::pair<int8_t, bool> r_stick_y;
+    std::pair<int8_t, bool> r_stick_x;
     std::pair<uint8_t, bool> l2;
     std::pair<uint8_t, bool> r2;
     bool left;

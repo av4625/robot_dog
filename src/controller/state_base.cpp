@@ -11,9 +11,21 @@ void state_base::on_exit(const std::shared_ptr<context>& ctx) const
 {
 }
 
+void state_base::on_l_stick_x_move(
+    const std::shared_ptr<context>& ctx,
+    const int8_t x_location)
+{
+}
+
 void state_base::on_l_stick_y_move(
     const std::shared_ptr<context>& ctx,
     const int8_t y_location)
+{
+}
+
+void state_base::on_r_stick_x_move(
+    const std::shared_ptr<context>& ctx,
+    const int8_t x_location)
 {
 }
 

@@ -29,7 +29,11 @@ public:
         const std::shared_ptr<hal::executer>& executer,
         const std::shared_ptr<hal::hardware::arduino>& arduino);
 
+    void on_l_stick_x_move(int8_t x_location);
+
     void on_l_stick_y_move(int8_t y_location);
+
+    void on_r_stick_x_move(int8_t x_location);
 
     void on_r_stick_y_move(int8_t y_location);
 

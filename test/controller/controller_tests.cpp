@@ -48,6 +48,15 @@ TEST_F(ControllerTests, CreateWillCreateAController)
     EXPECT_EQ(typeid(controller_), typeid(deref));
 }
 
+TEST_F(ControllerTests, OnLStickXMoveWillCallStateOnLStickXMove)
+{
+    const int8_t x(25);
+
+    EXPECT_CALL(*handlers_mock_, on_l_stick_x_move(context_, x));
+
+    controller_.on_l_stick_x_move(x);
+}
+
 TEST_F(ControllerTests, OnLStickYMoveWillCallStateOnLStickYMove)
 {
     const int8_t y(25);
@@ -55,6 +64,15 @@ TEST_F(ControllerTests, OnLStickYMoveWillCallStateOnLStickYMove)
     EXPECT_CALL(*handlers_mock_, on_l_stick_y_move(context_, y));
 
     controller_.on_l_stick_y_move(y);
+}
+
+TEST_F(ControllerTests, OnRStickXMoveWillCallStateOnRStickXMove)
+{
+    const int8_t x(25);
+
+    EXPECT_CALL(*handlers_mock_, on_r_stick_x_move(context_, x));
+
+    controller_.on_r_stick_x_move(x);
 }
 
 TEST_F(ControllerTests, OnRStickYMoveWillCallOnRStickYMove)

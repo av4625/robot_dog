@@ -15,9 +15,15 @@ class robot
 public:
     virtual ~robot(){}
     virtual void begin() = 0;
-    virtual void set_position(int8_t height, int8_t forward_back) = 0;
+    virtual void set_position(
+        int8_t height,
+        int8_t forward_back,
+        int8_t forward_back_lean,
+        int8_t side_to_side_lean) = 0;
     virtual void set_height(int8_t height) = 0;
     virtual void set_forward_back(int8_t forward_back) = 0;
+    virtual void set_forward_back_lean(int8_t lean) = 0;
+    virtual void set_side_to_side_lean(int8_t lean) = 0;
     virtual bool update_position() = 0;
     virtual void fully_extend_legs() = 0;
     virtual void set_legs_in_neutral_position() = 0;

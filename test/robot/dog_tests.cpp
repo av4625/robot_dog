@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <hal/config/manager_mock.hpp>
+#include <mathmatics/calculations_mock.hpp>
 #include <robot/dog.hpp>
 
 #include "leg_mock.hpp"
@@ -53,12 +54,14 @@ protected:
         rear_right_ptr_(dynamic_cast<leg_mock*>(rear_right_.get())),
         config_(new hal::config::manager_mock()),
         config_mock_(dynamic_cast<hal::config::manager_mock*>(config_.get())),
+        calc_mock_(std::make_shared<const mathmatics::calculations_mock>()),
         dog_(
             std::move(front_left_),
             std::move(rear_left_),
             std::move(front_right_),
             std::move(rear_right_),
-            std::move(config_))
+            std::move(config_),
+            calc_mock_)
     {
     }
 
@@ -72,7 +75,47 @@ protected:
     leg_mock* rear_right_ptr_;
     std::unique_ptr<hal::config::manager> config_;
     hal::config::manager_mock* config_mock_;
+    const std::shared_ptr<const mathmatics::calculations_mock> calc_mock_;
     dog dog_;
+
+    void calculate_leg_height_expects(
+        const int8_t height,
+        const int8_t forward_back_lean,
+        const int8_t side_to_side_lean,
+        const int times = 1)
+    {
+        EXPECT_CALL(*calc_mock_, constrict(
+            ::testing::TypedEq<int>(
+                height - forward_back_lean + side_to_side_lean),
+            ::testing::TypedEq<int>(INT8_MIN),
+            ::testing::TypedEq<int>(INT8_MAX)))
+                .Times(times).WillRepeatedly(
+                    ::testing::Return(10));
+
+        EXPECT_CALL(*calc_mock_, constrict(
+            ::testing::TypedEq<int>(
+                height - forward_back_lean - side_to_side_lean),
+            ::testing::TypedEq<int>(INT8_MIN),
+            ::testing::TypedEq<int>(INT8_MAX)))
+                .Times(times).WillRepeatedly(
+                    ::testing::Return(10));
+
+        EXPECT_CALL(*calc_mock_, constrict(
+            ::testing::TypedEq<int>(
+                height + forward_back_lean + side_to_side_lean),
+            ::testing::TypedEq<int>(INT8_MIN),
+            ::testing::TypedEq<int>(INT8_MAX)))
+                .Times(times).WillRepeatedly(
+                    ::testing::Return(10));
+
+        EXPECT_CALL(*calc_mock_, constrict(
+            ::testing::TypedEq<int>(
+                height + forward_back_lean - side_to_side_lean),
+            ::testing::TypedEq<int>(INT8_MIN),
+            ::testing::TypedEq<int>(INT8_MAX)))
+                .Times(times).WillRepeatedly(
+                    ::testing::Return(10));
+    }
 };
 
 }
@@ -91,52 +134,61 @@ TEST_F(DogTests, BeginWillCallBeginForAllLegs)
 
 TEST_F(DogTests, SetPositionWillCallSetPositionForAllLegs)
 {
+    calculate_leg_height_expects(1, 3, 4);
+
     EXPECT_CALL(*front_left_ptr_, set_position(
-        1,
+        10,
         2,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
     EXPECT_CALL(*rear_left_ptr_, set_position(
-        1,
+        10,
         2,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
     EXPECT_CALL(*front_right_ptr_, set_position(
-        1,
+        10,
         2,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
     EXPECT_CALL(*rear_right_ptr_, set_position(
-        1,
+        10,
         2,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
-    dog_.set_position(1, 2);
+    dog_.set_position(1, 2, 3, 4);
 }
 
 TEST_F(DogTests, SetHeightWillCallSetHeightForAllLegs)
 {
+    EXPECT_CALL(*calc_mock_, constrict(
+        ::testing::TypedEq<int>(1),
+        ::testing::TypedEq<int>(INT8_MIN),
+        ::testing::TypedEq<int>(INT8_MAX)))
+            .Times(4).WillRepeatedly(
+                ::testing::Return(10));
+
     EXPECT_CALL(*front_left_ptr_, set_height(
-        1,
+        10,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
     EXPECT_CALL(*rear_left_ptr_, set_height(
-        1,
+        10,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
     EXPECT_CALL(*front_right_ptr_, set_height(
-        1,
+        10,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
     EXPECT_CALL(*rear_right_ptr_, set_height(
-        1,
+        10,
         ::testing::Matcher<utility::robot::movement>(
             utility::robot::movement::smooth)));
 
@@ -166,6 +218,84 @@ TEST_F(DogTests, SetForwardBackWillCallSetForwardBackForAllLegs)
             utility::robot::movement::smooth)));
 
     dog_.set_forward_back(1);
+}
+
+TEST_F(DogTests, SetForwardBackLeanWillCallSetHeightForAllLegs)
+{
+    EXPECT_CALL(*calc_mock_, constrict(
+        ::testing::TypedEq<int>(4),
+        ::testing::TypedEq<int>(INT8_MIN),
+        ::testing::TypedEq<int>(INT8_MAX)))
+            .Times(2).WillRepeatedly(
+                ::testing::Return(10));
+
+    EXPECT_CALL(*calc_mock_, constrict(
+        ::testing::TypedEq<int>(-4),
+        ::testing::TypedEq<int>(INT8_MIN),
+        ::testing::TypedEq<int>(INT8_MAX)))
+            .Times(2).WillRepeatedly(
+                ::testing::Return(10));
+
+    EXPECT_CALL(*front_left_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    EXPECT_CALL(*rear_left_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    EXPECT_CALL(*front_right_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    EXPECT_CALL(*rear_right_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    dog_.set_forward_back_lean(4);
+}
+
+TEST_F(DogTests, SetSideToSideLeanWillCallSetHeightForAllLegs)
+{
+    EXPECT_CALL(*calc_mock_, constrict(
+        ::testing::TypedEq<int>(6),
+        ::testing::TypedEq<int>(INT8_MIN),
+        ::testing::TypedEq<int>(INT8_MAX)))
+            .Times(2).WillRepeatedly(
+                ::testing::Return(10));
+
+    EXPECT_CALL(*calc_mock_, constrict(
+        ::testing::TypedEq<int>(-6),
+        ::testing::TypedEq<int>(INT8_MIN),
+        ::testing::TypedEq<int>(INT8_MAX)))
+            .Times(2).WillRepeatedly(
+                ::testing::Return(10));
+
+    EXPECT_CALL(*front_left_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    EXPECT_CALL(*rear_left_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    EXPECT_CALL(*front_right_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    EXPECT_CALL(*rear_right_ptr_, set_height(
+        10,
+        ::testing::Matcher<utility::robot::movement>(
+            utility::robot::movement::smooth)));
+
+    dog_.set_forward_back_lean(6);
 }
 
 class DogTestsUpdatePosition :
@@ -237,7 +367,7 @@ TEST_P(DogTestsTrim, TrimJointWhenLimbIsFrontLeftWillTrimFrontLeft)
         GetParam().first,
         GetParam().second);
 
-    // Use save settings to make sure correct setting were saved
+    // Use save settings to make sure correct settings were saved
     if (GetParam().first == utility::robot::joint::shoulder)
     {
         EXPECT_CALL(*config_mock_, save_settings(
@@ -295,7 +425,7 @@ TEST_P(DogTestsTrim, TrimJointWhenLimbIsRearLeftWillTrimRearLeft)
         GetParam().first,
         GetParam().second);
 
-    // Use save settings to make sure correct setting were saved
+    // Use save settings to make sure correct settings were saved
     if (GetParam().first == utility::robot::joint::shoulder)
     {
         EXPECT_CALL(*config_mock_, save_settings(
@@ -353,7 +483,7 @@ TEST_P(DogTestsTrim, TrimJointWhenLimbIsFrontRightWillTrimFrontRight)
         GetParam().first,
         GetParam().second);
 
-    // Use save settings to make sure correct setting were saved
+    // Use save settings to make sure correct settings were saved
     if (GetParam().first == utility::robot::joint::shoulder)
     {
         EXPECT_CALL(*config_mock_, save_settings(
@@ -411,7 +541,7 @@ TEST_P(DogTestsTrim, TrimJointWhenLimbIsRearRightWillTrimRearRight)
         GetParam().first,
         GetParam().second);
 
-    // Use save settings to make sure correct setting were saved
+    // Use save settings to make sure correct settings were saved
     if (GetParam().first == utility::robot::joint::shoulder)
     {
         EXPECT_CALL(*config_mock_, save_settings(

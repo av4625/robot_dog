@@ -17,6 +17,13 @@ void state_lean::on_entry(const std::shared_ptr<context>& ctx)
     ctx->set_gamepad_light_colour(0, 0, 255);
 }
 
+void state_lean::on_l_stick_x_move(
+    const std::shared_ptr<context>& ctx,
+    const int8_t x_location)
+{
+    ctx->get_robot()->set_forward_back(x_location);
+}
+
 void state_lean::on_l_stick_y_move(
     const std::shared_ptr<context>& ctx,
     const int8_t y_location)
@@ -24,23 +31,18 @@ void state_lean::on_l_stick_y_move(
     ctx->get_robot()->set_height(y_location);
 }
 
+void state_lean::on_r_stick_x_move(
+    const std::shared_ptr<context>& ctx,
+    const int8_t x_location)
+{
+    ctx->get_robot()->set_side_to_side_lean(x_location);
+}
+
 void state_lean::on_r_stick_y_move(
     const std::shared_ptr<context>& ctx,
     const int8_t y_location)
 {
-    ctx->get_robot()->set_forward_back(y_location);
-}
-
-void state_lean::on_l2_move(
-    const std::shared_ptr<context>& ctx,
-    const uint8_t location)
-{
-}
-
-void state_lean::on_r2_move(
-    const std::shared_ptr<context>& ctx,
-    const uint8_t location)
-{
+    ctx->get_robot()->set_forward_back_lean(y_location);
 }
 
 void state_lean::on_settings_button(const std::shared_ptr<context>& ctx)

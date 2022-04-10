@@ -30,9 +30,19 @@ std::shared_ptr<controller> controller::create(
         std::make_shared<handler_router>());
 }
 
+void controller::on_l_stick_x_move(const int8_t x_location)
+{
+    handlers_->on_l_stick_x_move(ctx_, x_location);
+}
+
 void controller::on_l_stick_y_move(const int8_t y_location)
 {
     handlers_->on_l_stick_y_move(ctx_, y_location);
+}
+
+void controller::on_r_stick_x_move(const int8_t x_location)
+{
+    handlers_->on_r_stick_x_move(ctx_, x_location);
 }
 
 void controller::on_r_stick_y_move(const int8_t y_location)

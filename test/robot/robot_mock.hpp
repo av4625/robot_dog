@@ -13,11 +13,23 @@ public:
     MOCK_METHOD(void, begin, (), (override));
 
     MOCK_METHOD(
-        void, set_position, (int8_t height, int8_t forward_back), (override));
+        void,
+        set_position,
+        (
+            int8_t height,
+            int8_t forward_back,
+            int8_t forward_back_lean,
+            int8_t side_to_side_lean
+        ),
+        (override));
 
     MOCK_METHOD(void, set_height, (int8_t height), (override));
 
     MOCK_METHOD(void, set_forward_back, (int8_t forward_back), (override));
+
+    MOCK_METHOD(void, set_forward_back_lean, (int8_t lean), (override));
+
+    MOCK_METHOD(void, set_side_to_side_lean, (int8_t lean), (override));
 
     MOCK_METHOD(bool, update_position, (), (override));
 

@@ -97,10 +97,22 @@ TEST_F(StateTrimTests, OnExitWillCallUpdateContinuallyUntilUpdateIsFinished)
     state_trim_.on_exit(context_mock_);
 }
 
+TEST_F(StateTrimTests, OnLStickXMoveWillDoNothing)
+{
+    const int8_t x{55};
+    state_trim_.on_l_stick_x_move(context_mock_, x);
+}
+
 TEST_F(StateTrimTests, OnLStickYMoveWillDoNothing)
 {
     const int8_t y{55};
     state_trim_.on_l_stick_y_move(context_mock_, y);
+}
+
+TEST_F(StateTrimTests, OnRStickXMoveWillDoNothing)
+{
+    const int8_t x{55};
+    state_trim_.on_r_stick_x_move(context_mock_, x);
 }
 
 TEST_F(StateTrimTests, OnRStickYMoveWillDoNothing)

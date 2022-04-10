@@ -12,8 +12,20 @@ class handlers_mock : public handlers
 public:
     MOCK_METHOD(
         void,
+        on_l_stick_x_move,
+        (const std::shared_ptr<context>& ctx, int8_t x_location),
+        (override));
+
+    MOCK_METHOD(
+        void,
         on_l_stick_y_move,
         (const std::shared_ptr<context>& ctx, int8_t y_location),
+        (override));
+
+    MOCK_METHOD(
+        void,
+        on_r_stick_x_move,
+        (const std::shared_ptr<context>& ctx, int8_t x_location),
         (override));
 
     MOCK_METHOD(
